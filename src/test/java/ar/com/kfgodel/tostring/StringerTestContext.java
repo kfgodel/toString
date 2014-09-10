@@ -12,4 +12,7 @@ public interface StringerTestContext extends TestContext {
 
     Stringer stringer();
     void stringer(Supplier<Stringer> definition);
+
+    Object object();
+    void object(Supplier<Object> definition);
 }
