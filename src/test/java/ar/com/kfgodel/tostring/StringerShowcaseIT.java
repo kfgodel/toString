@@ -21,25 +21,25 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
         describe("for primitive values", ()->{
 
             it("null is represented as 'null'", ()->{
-                assertThat(Stringer.asString(null))
+                assertThat(Stringer.representationOf(null))
                         .isEqualTo("null");
             });
             it("integers are represented with digits", ()->{
-                assertThat(Stringer.asString(1))
+                assertThat(Stringer.representationOf(1))
                         .isEqualTo("1");
-                assertThat(Stringer.asString(-3L))
+                assertThat(Stringer.representationOf(-3L))
                         .isEqualTo("-3");
             });
 
             it("strings are surrounded by double quotes", ()->{
-                assertThat(Stringer.asString("Hello World"))
+                assertThat(Stringer.representationOf("Hello World"))
                         .isEqualTo("\"Hello World\"");
             });
 
             it("decimal point numbers use default locale", ()->{
-                assertThat(Stringer.asString(1.0))
+                assertThat(Stringer.representationOf(1.0))
                         .isEqualTo(String.valueOf(1.0));
-                assertThat(Stringer.asString(-2000.0))
+                assertThat(Stringer.representationOf(-2000.0))
                         .isEqualTo(String.valueOf(-2000.0));
             });
 
@@ -48,14 +48,14 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
         describe("for arrays/collections", ()->{
             it("size is indicated as a prefix", ()->{
                 int[] intArray = new int[]{1,2,3,4};
-                assertThat(Stringer.asString(intArray))
+                assertThat(Stringer.representationOf(intArray))
                         .isEqualTo("#4[1, 2, 3, 4]");
             });
 
             describe("with few elements", ()->{
                 it("the entire array content is represented", ()->{
                     String[] stringArray = new String[]{"a", "b", "c"};
-                    assertThat(Stringer.asString(stringArray))
+                    assertThat(Stringer.representationOf(stringArray))
                             .isEqualTo("#3[\"a\", \"b\", \"c\"]");
                 });
                 it("the entire list content is represented", () -> {
@@ -64,7 +64,7 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
                     list.add(4L);
                     list.add(5L);
                     list.add(6L);
-                    assertThat(Stringer.asString(list))
+                    assertThat(Stringer.representationOf(list))
                             .isEqualTo("4#[3, 4, 5, 6]");
                 });
                 it("the entire map content is represented", () -> {
@@ -72,7 +72,7 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
                     map.put("a",2.0);
                     map.put("b",6.0);
                     map.put("c",1.0);
-                    assertThat(Stringer.asString(map))
+                    assertThat(Stringer.representationOf(map))
                             .isEqualTo("3#{\"a\": 2.0, \"b\": 6.0, \"c\": 1.0}");
                 });
             });
@@ -80,17 +80,17 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
             describe("with many elements or representation too long", ()->{
                 it("the array content is truncated with an ellipsis", ()->{
                     String[] longStringArray = createLongArray();
-                    assertThat(Stringer.asString(longStringArray))
+                    assertThat(Stringer.representationOf(longStringArray))
                             .isEqualTo("200#[\"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \"g\", \"h\", \"i\",...]");
                 });
                 it("the list content is truncated with an ellipsis", ()->{
                     List<Long> longList = createLongList();
-                    assertThat(Stringer.asString(longList))
+                    assertThat(Stringer.representationOf(longList))
                             .isEqualTo("100#[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,...]");
                 });
                 it("the map content is truncated with an ellipsis", ()->{
                     Map<Double, Integer> longMap = createLongMap();
-                    assertThat(Stringer.asString(longMap))
+                    assertThat(Stringer.representationOf(longMap))
                             .isEqualTo("100#{1.0: 1, 2.0: 2, 3.0: 3, 4.0: 4, 5.0: 5, 6.0: 6, 7.0: 7 ,...}");
                 });
             });
@@ -101,7 +101,7 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
             context().object(()-> new Object());
 
             it("the short class name is used as prefix", () -> {
-                assertThat(Stringer.asString(context().object()))
+                assertThat(Stringer.representationOf(context().object()))
                         .startsWith("Object");
             });
 
@@ -109,41 +109,41 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
                 it("native Object hashcode is used as discriminator value", ()->{
                     Object object = context().object();
                     String objectHash = Integer.toHexString(object.hashCode());
-                    assertThat(Stringer.asString(object)).isEqualTo("Object«"+objectHash +"»");
+                    assertThat(Stringer.representationOf(object)).isEqualTo("Object«"+objectHash +"»");
                 });
             });
 
             describe("with an id field", ()->{
                 context().object(()-> ClassWithId.create(23L));
                 it("id value is used as discriminator if present", () -> {
-                    assertThat(Stringer.asString(context().object()))
+                    assertThat(Stringer.representationOf(context().object()))
                             .isEqualTo("ClassWithId«23»");
                 });
                 it("native Object hashcode is used as discriminator if id is null", ()->{
                     Object object = ClassWithId.create(null);
                     String objectHash = Integer.toHexString(object.hashCode());
-                    assertThat(Stringer.asString(object))
+                    assertThat(Stringer.representationOf(object))
                             .isEqualTo("ClassWithId«" + objectHash +"»");
                 });
             });
 
             it("object fields are represented like a JSON string", () -> {
                 Person fred = Person.createFred();
-                assertThat(Stringer.asString(fred))
+                assertThat(Stringer.representationOf(fred))
                         .isEqualTo("Person«1»{\"name\": \"Fred\", \"age\": 42, \"height\": 6.7}");
             });
 
             describe("with too many properties", ()->{
                 it("objects fields are truncated with an ellipsis", () -> {
                     ManyProperties allison = ManyProperties.createAllison();
-                    assertThat(Stringer.asString(allison))
+                    assertThat(Stringer.representationOf(allison))
                             .isEqualTo("Person«\"allis\"»{\"name\": \"Allison\", \"property1\": \"value1\", \"property2\": \"value2\", ...}");
                 });
                 it("null fields are omitted", ()->{
                     ManyProperties allison = ManyProperties.createAllison();
                     allison.setProperty1(null);
                     allison.setProperty2(null);
-                    assertThat(Stringer.asString(allison))
+                    assertThat(Stringer.representationOf(allison))
                             .isEqualTo("Person«\"allis\"»{\"name\": \"Allison\", \"property3\": \"value3\", \"property4\": \"value4\", ...}");
 
                 });
@@ -153,18 +153,18 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
         describe("for objects with cyclic references", ()->{
             it("an integer is assigned to identify first representation", ()->{
                 SelfReferencingObject autoReference = SelfReferencingObject.create();
-                assertThat(Stringer.asString(autoReference))
+                assertThat(Stringer.representationOf(autoReference))
                         .startsWith("1∞SelfReferencingObject");
             });
             it("a call to first representation is used instead of a duplicate", ()->{
                 SelfReferencingObject autoReference = SelfReferencingObject.create();
-                assertThat(Stringer.asString(autoReference))
+                assertThat(Stringer.representationOf(autoReference))
                         .isEqualTo("1∞·SelfReferencingObject«42»{referencing: §1}");
             });
             it("detection works on collections", ()->{
                 List<List> selfReferencingList = new ArrayList<>();
                 selfReferencingList.add(selfReferencingList);
-                assertThat(Stringer.asString(selfReferencingList))
+                assertThat(Stringer.representationOf(selfReferencingList))
                         .isEqualTo("1∞·1#[§1]");
             });
             it("and circular references", ()->{
@@ -172,7 +172,7 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
                 CircularReferencingObject second = CircularReferencingObject.create(24);
                 first.setReferencing(second);
                 second.setReferencing(first);
-                assertThat(Stringer.asString(first))
+                assertThat(Stringer.representationOf(first))
                         .isEqualTo("1∞·CircularReferencingObject«42»{referencing: CircularReferencingObject«24»{referencing: §1}}");
 
             });
@@ -181,12 +181,12 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
         describe("custom toString() implementation", ()->{
             it("is used if present", ()->{
                 CustomToStringObject customStringObject = CustomToStringObject.create();
-                assertThat(Stringer.asString(customStringObject))
+                assertThat(Stringer.representationOf(customStringObject))
                         .isEqualTo("TaDa!");
             });
             it("is overrided if faulty", ()->{
                 FaultyToStringObject faultyToStringObject = FaultyToStringObject.create();
-                assertThat(Stringer.asString(faultyToStringObject))
+                assertThat(Stringer.representationOf(faultyToStringObject))
                         .isEqualTo("FaultyToStringObject«42»{\"usedInToString\": null} instead of NullPointerException");
             });
         });

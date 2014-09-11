@@ -12,7 +12,7 @@ public interface Stringer {
      * @param object THe object to be represented
      * @return The String representation of the object state
      */
-    public static String asString(Object object){
+    public static String representationOf(Object object){
         return null;
     }
 }
