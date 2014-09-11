@@ -18,6 +18,8 @@ public class ObjectRepresentationTest extends JavaSpec<StringerTestContext> {
         });
         describe("object fields", ()->{
             it("are ordered in declaration order");
+            it("null value are included if small representation");
+            it("null value are omitted if big representation");
         });
     }
 }
