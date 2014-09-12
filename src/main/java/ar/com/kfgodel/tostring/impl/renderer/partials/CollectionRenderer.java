@@ -4,6 +4,8 @@ import ar.com.kfgodel.tostring.Stringer;
 import ar.com.kfgodel.tostring.impl.renderer.PartialRenderer;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.Spliterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -29,21 +31,21 @@ public class CollectionRenderer implements PartialRenderer<Collection<Object>> {
         int lowToleranceCardinality = Stringer.CONFIGURATION.getCardinalityForLowTolerance();
         int contentSizeLimit = (collection.size() > lowToleranceCardinality)?  Stringer.CONFIGURATION.getLowToleranceSize() : Stringer.CONFIGURATION.getHighToleranceSize();
 
-        AtomicInteger counter = new AtomicInteger(1);
-        boolean limitExceeded = collection.stream()
-                .map((object) -> Stringer.representationOf(object))
-                .anyMatch((objectRepresentation) -> {
-                    builder.append(objectRepresentation);
-                    boolean isNotLastElement = counter.getAndIncrement() < collection.size();
-                    if (isNotLastElement) {
-                        //Is not the last, we need a separator
-                        builder.append(Stringer.CONFIGURATION.getSequenceElementSeparatorSymbol());
-                    }
-                    // End if we exceeded the limit
-                    return builder.length() > contentSizeLimit;
-                });
-        boolean beforeTheLastOne = counter.get() <= collection.size();
-        if(limitExceeded && beforeTheLastOne){
+        int counter = 1;
+        Iterator<Object> elementIterator = collection.iterator();
+        boolean underLimit = true;
+        while(elementIterator.hasNext() && (underLimit = builder.length() < contentSizeLimit)){
+            Object object = elementIterator.next();
+            String objectRepresentation = Stringer.representationOf(object);
+            builder.append(objectRepresentation);
+            boolean isNotLastElement = counter++ < collection.size();
+            if (isNotLastElement) {
+                //Is not the last, we need a separator
+                builder.append(Stringer.CONFIGURATION.getSequenceElementSeparatorSymbol());
+            }
+        }
+        boolean beforeTheLastOne = counter <= collection.size();
+        if(!underLimit && beforeTheLastOne){
             //Not all the content made it
             builder.append(Stringer.CONFIGURATION.getTruncatedContentSymbol());
         }
