@@ -1,4 +1,4 @@
-package ar.com.kfgodel.tostring.impl;
+package ar.com.kfgodel.tostring.impl.references;
 
 /**
  * This type represents an object that has a number reference to be used in cyclic representation

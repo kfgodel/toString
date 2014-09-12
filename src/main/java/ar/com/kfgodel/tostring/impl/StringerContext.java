@@ -8,7 +8,7 @@ import java.util.function.Function;
  */
 public class StringerContext {
 
-    private static final ThreadLocal<StringerRepresentation> threadContext = new ThreadLocal<>();
+    private static final ThreadLocal<StringerRepresentation> THREAD_CONTEXT = new ThreadLocal<>();
 
     /**
      * Executes given action with current representation, creating one if there's none.<br>
@@ -16,7 +16,7 @@ public class StringerContext {
      * @return The result of the action
      */
     public static<T> T doWithActiveRepresentation(Function<StringerRepresentation, T> action) {
-        StringerRepresentation existingRepresentation = threadContext.get();
+        StringerRepresentation existingRepresentation = THREAD_CONTEXT.get();
         if(existingRepresentation != null){
             //We don't need to create one
             return executeOn(existingRepresentation, action);
@@ -34,11 +34,11 @@ public class StringerContext {
     private static <T> T executeWithNewRepresentation(Function<StringerRepresentation, T> action) {
         //There's no previous. We create and set it in context for the duration of the action
         StringerRepresentation createdRepresentation = StringerRepresentation.create();
-        threadContext.set(createdRepresentation);
+        THREAD_CONTEXT.set(createdRepresentation);
         try{
             return executeOn(createdRepresentation, action);
         }finally {
-            threadContext.remove();
+            THREAD_CONTEXT.remove();
         }
     }
 

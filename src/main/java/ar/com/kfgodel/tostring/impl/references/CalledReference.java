@@ -1,4 +1,4 @@
-package ar.com.kfgodel.tostring.impl;
+package ar.com.kfgodel.tostring.impl.references;
 
 /**
  * This type represents a string representation that was referenced

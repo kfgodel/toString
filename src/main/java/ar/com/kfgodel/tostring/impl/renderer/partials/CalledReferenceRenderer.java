@@ -1,8 +1,7 @@
 package ar.com.kfgodel.tostring.impl.renderer.partials;
 
 import ar.com.kfgodel.tostring.Stringer;
-import ar.com.kfgodel.tostring.impl.CalledReference;
-import ar.com.kfgodel.tostring.impl.ReferentiableObject;
+import ar.com.kfgodel.tostring.impl.references.CalledReference;
 import ar.com.kfgodel.tostring.impl.renderer.PartialRenderer;
 
 /**
