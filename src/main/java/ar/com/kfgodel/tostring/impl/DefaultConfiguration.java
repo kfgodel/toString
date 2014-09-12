@@ -8,35 +8,84 @@ import ar.com.kfgodel.tostring.StringerConfiguration;
  */
 public class DefaultConfiguration implements StringerConfiguration {
 
-    public static DefaultConfiguration create(){
-        return new DefaultConfiguration();
+    @Override
+    public String getStringQuotingSymbol() {
+        return "\"";
     }
 
     @Override
-    public String renderNumber(Number asNumber) {
-        return String.valueOf(asNumber);
+    public String getReferenceCallSymbol() {
+        return "§";
     }
 
     @Override
-    public String renderCharSequence(CharSequence charSeq) {
-        //We want the strings to be double quoted
-        StringBuilder builder = new StringBuilder(charSeq.length() + 2);
-        builder.append("\"");
-        builder.append(charSeq);
-        builder.append("\"");
-        return builder.toString();
+    public String getCharacterQuotingSymbol() {
+        return "'";
     }
 
     @Override
-    public String renderCircularReference(Integer knownReference) {
-        StringBuilder builder = new StringBuilder(2);
-        builder.append("§");
-        builder.append(knownReference);
-        return builder.toString();
+    public String getReferenceDeclarationSymbol() {
+        return "∞·";
     }
 
     @Override
-    public String renderNull() {
-        return "null";
+    public String getCardinalitySymbol() {
+        return "#";
     }
+
+    @Override
+    public String getOpeningSequenceSymbol() {
+        return "[";
+    }
+
+    @Override
+    public String getClosingSequenceSymbol() {
+        return "]";
+    }
+
+    @Override
+    public int getCardinalityForLowTolerance() {
+        return 5;
+    }
+
+    @Override
+    public int getLowToleranceSize() {
+        return 60;
+    }
+
+    @Override
+    public int getHighToleranceSize() {
+        return 80;
+    }
+
+    @Override
+    public String getSequenceElementSeparatorSymbol() {
+        return ", ";
+    }
+
+    @Override
+    public String getTruncatedContentSymbol() {
+        return "...";
+    }
+
+    @Override
+    public String getOpeningHashSymbol() {
+        return "{";
+    }
+
+    @Override
+    public String getClosingHashSymbol() {
+        return "}";
+    }
+
+    @Override
+    public String getKeySeparatorSymbol() {
+        return ": ";
+    }
+
+    public static DefaultConfiguration create() {
+        DefaultConfiguration defaultConfiguration = new DefaultConfiguration();
+        return defaultConfiguration;
+    }
+
 }

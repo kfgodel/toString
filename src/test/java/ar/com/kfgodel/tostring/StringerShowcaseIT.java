@@ -49,14 +49,14 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
             it("size is indicated as a prefix", ()->{
                 int[] intArray = new int[]{1,2,3,4};
                 assertThat(Stringer.representationOf(intArray))
-                        .isEqualTo("#4[1, 2, 3, 4]");
+                        .isEqualTo("4#[1, 2, 3, 4]");
             });
 
             describe("with few elements", ()->{
                 it("the entire array content is represented", ()->{
                     String[] stringArray = new String[]{"a", "b", "c"};
                     assertThat(Stringer.representationOf(stringArray))
-                            .isEqualTo("#3[\"a\", \"b\", \"c\"]");
+                            .isEqualTo("3#[\"a\", \"b\", \"c\"]");
                 });
                 it("the entire list content is represented", () -> {
                     List<Long> list = new ArrayList<>();
@@ -81,17 +81,17 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
                 it("the array content is truncated with an ellipsis", ()->{
                     String[] longStringArray = createLongArray();
                     assertThat(Stringer.representationOf(longStringArray))
-                            .isEqualTo("200#[\"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \"g\", \"h\", \"i\",...]");
+                            .isEqualTo("200#[\"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \"g\", \"h\", ...]");
                 });
                 it("the list content is truncated with an ellipsis", ()->{
                     List<Long> longList = createLongList();
                     assertThat(Stringer.representationOf(longList))
-                            .isEqualTo("100#[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,...]");
+                            .isEqualTo("100#[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ...]");
                 });
                 it("the map content is truncated with an ellipsis", ()->{
                     Map<Double, Integer> longMap = createLongMap();
                     assertThat(Stringer.representationOf(longMap))
-                            .isEqualTo("100#{1.0: 1, 2.0: 2, 3.0: 3, 4.0: 4, 5.0: 5, 6.0: 6, 7.0: 7 ,...}");
+                            .isEqualTo("100#{1.0: 1, 2.0: 2, 3.0: 3, 4.0: 4, 5.0: 5, 6.0: 6, 7.0: 7, ...}");
                 });
             });
         });
@@ -209,9 +209,10 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
     }
 
     private String[] createLongArray() {
+        byte a = 'a';
         String[] longArray = new String[200];
         for (int i = 0; i < longArray.length; i++) {
-            longArray[i] = ('a' + i) + "";
+            longArray[i] = (char)(a + i) + "";
         }
         return longArray;
     }

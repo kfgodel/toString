@@ -1,33 +1,85 @@
 package ar.com.kfgodel.tostring;
 
+import javax.print.DocFlavor;
+
 /**
  * This type represents the configuration of Stringer
  * Created by kfgodel on 11/09/14.
  */
 public interface StringerConfiguration {
     /**
-     * Returns the string corresponding to given number
-     * @param asNumber The number to render
-     * @return The string to use as value for the number
+     * @return The symbol used to quote strings in the representations
      */
-    String renderNumber(Number asNumber);
+    String getStringQuotingSymbol();
 
     /**
-     * Returns the string corresponding to the given value
-     * @param charSeq The sequence to render
-     * @return The string that represents the sequence
+     * @return The symbol used to make call to references in parts of the representation
      */
-    String renderCharSequence(CharSequence charSeq);
+    String getReferenceCallSymbol();
 
     /**
-     * Returns the string that represents the call to a previous reference
-     * @param knownReference The number that identifies the duplicate object
-     * @return The String with the call
+     * @return The symbol used to quote characters
      */
-    String renderCircularReference(Integer knownReference);
+    String getCharacterQuotingSymbol();
 
     /**
-     * @return The representation for null
+     * @return THe symbol used to declare a reference in the representation
      */
-    String renderNull();
+    String getReferenceDeclarationSymbol();
+
+    /**
+     * @return The symbol used to express the size of a collection
+     */
+    String getCardinalitySymbol();
+
+    /**
+     * @return The symbols used to start a sequence
+     */
+    String getOpeningSequenceSymbol();
+
+    /**
+     * @return The symbol used to end a sequence
+     */
+    String getClosingSequenceSymbol();
+
+    /**
+     * @return The number of elements a collection must have to be heavily compacted
+     */
+    int getCardinalityForLowTolerance();
+
+    /**
+     * @return Amount of chars allowed for heavily compacted representations
+     */
+    int getLowToleranceSize();
+
+
+    /**
+     * @return Amount of chars allowed for normal representations
+     */
+    int getHighToleranceSize();
+
+    /**
+     * @return The symbol used to separate sequence elements
+     */
+    String getSequenceElementSeparatorSymbol();
+
+    /**
+     * @return The symbol used to indicate an incomplete content
+     */
+    String getTruncatedContentSymbol();
+
+    /**
+     * @return The symbol used to start a hash of pairs
+     */
+    String getOpeningHashSymbol();
+
+    /**
+     * @return The symbol used to end a hash of pairs
+     */
+    String getClosingHashSymbol();
+
+    /**
+     * @return Symbol used to separate key from value
+     */
+    String getKeySeparatorSymbol();
 }
