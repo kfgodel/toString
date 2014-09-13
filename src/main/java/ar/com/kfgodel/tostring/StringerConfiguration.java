@@ -82,4 +82,14 @@ public interface StringerConfiguration {
      * @return Symbol used to separate key from value
      */
     String getKeySeparatorSymbol();
+
+    /**
+     * @return The symbol used to start a discriminator id
+     */
+    String getOpeningIdSymbol();
+
+    /**
+     * @return The symbol used to end a discriminator id
+     */
+    String getClosingIdSymbol();
 }

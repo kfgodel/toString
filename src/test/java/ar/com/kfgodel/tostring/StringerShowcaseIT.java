@@ -81,17 +81,17 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
                 it("the array content is truncated with an ellipsis", ()->{
                     String[] longStringArray = createLongArray();
                     assertThat(Stringer.representationOf(longStringArray))
-                            .isEqualTo("200#[\"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \"g\", \"h\", ...]");
+                            .isEqualTo("200#[\"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \"g\", \"h\", \"i\", \"j\", \"k\", \"l\", ...]");
                 });
                 it("the list content is truncated with an ellipsis", ()->{
                     List<Long> longList = createLongList();
                     assertThat(Stringer.representationOf(longList))
-                            .isEqualTo("100#[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ...]");
+                            .isEqualTo("100#[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, ...]");
                 });
                 it("the map content is truncated with an ellipsis", ()->{
                     Map<Double, Integer> longMap = createLongMap();
                     assertThat(Stringer.representationOf(longMap))
-                            .isEqualTo("100#{1.0: 1, 2.0: 2, 3.0: 3, 4.0: 4, 5.0: 5, 6.0: 6, 7.0: 7, ...}");
+                            .isEqualTo("100#{0.0: 0, 1.0: 1, 2.0: 2, 3.0: 3, 4.0: 4, 5.0: 5, 6.0: 6, ...}");
                 });
             });
         });
@@ -159,7 +159,7 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
             it("a call to first representation is used instead of a duplicate", ()->{
                 SelfReferencingObject autoReference = SelfReferencingObject.create();
                 assertThat(Stringer.representationOf(autoReference))
-                        .isEqualTo("1∞·SelfReferencingObject«42»{referencing: §1}");
+                        .isEqualTo("1∞·SelfReferencingObject«42»{\"referencing\": §1}");
             });
             it("detection works on collections", ()->{
                 List<List> selfReferencingList = new ArrayList<>();
@@ -173,7 +173,7 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
                 first.setReferencing(second);
                 second.setReferencing(first);
                 assertThat(Stringer.representationOf(first))
-                        .isEqualTo("1∞·CircularReferencingObject«42»{referencing: CircularReferencingObject«24»{referencing: §1}}");
+                        .isEqualTo("1∞·CircularReferencingObject«42»{\"referencing\": CircularReferencingObject«24»{\"referencing\": §1}}");
 
             });
         });
@@ -187,7 +187,7 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
             it("is overrided if faulty", ()->{
                 FaultyToStringObject faultyToStringObject = FaultyToStringObject.create();
                 assertThat(Stringer.representationOf(faultyToStringObject))
-                        .isEqualTo("FaultyToStringObject«42»{\"usedInToString\": null} instead of NullPointerException");
+                        .isEqualTo("FaultyToStringObject«42»{\"usedInToString\": null} instead of NullPointerException: null");
             });
         });
     }

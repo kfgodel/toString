@@ -28,6 +28,7 @@ public class ArrayRenderer implements PartialRenderer<Object> {
     private void addContentTo(StringBuilder builder, Object array, int arrayLength) {
         int lowToleranceCardinality = Stringer.CONFIGURATION.getCardinalityForLowTolerance();
         int contentSizeLimit = (arrayLength > lowToleranceCardinality)?  Stringer.CONFIGURATION.getLowToleranceSize() : Stringer.CONFIGURATION.getHighToleranceSize();
+
         for (int i = 0; i < arrayLength; i++) {
             Object element = Array.get(array, i);
             String elementRepresentation = Stringer.representationOf(element);

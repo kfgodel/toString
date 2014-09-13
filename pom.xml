@@ -38,6 +38,7 @@
     <version.assertj>1.6.1</version.assertj>
     <version.mockito>1.9.5</version.mockito>
     <version.javaspec>2.0</version.javaspec>
+    <version.mirror>1.6.1</version.mirror>
 
       <!-- Location of the JaCoCo output file created by the agent execution during ITs. We want
 all modules to dump their coverage information into a single file for Sonar to pick up.
@@ -198,6 +199,14 @@ of a fixed location is recommended. -->
   </pluginRepositories>
   
   <dependencies>
+
+    <!-- Reflection for accessing object fields -->
+      <dependency>
+          <groupId>net.vidageek</groupId>
+          <artifactId>mirror</artifactId>
+          <version>${version.mirror}</version>
+      </dependency>
+
   
     <!-- Logging -->
     <dependency>

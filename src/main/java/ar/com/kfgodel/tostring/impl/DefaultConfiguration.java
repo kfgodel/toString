@@ -83,6 +83,16 @@ public class DefaultConfiguration implements StringerConfiguration {
         return ": ";
     }
 
+    @Override
+    public String getOpeningIdSymbol() {
+        return "«";
+    }
+
+    @Override
+    public String getClosingIdSymbol() {
+        return "»";
+    }
+
     public static DefaultConfiguration create() {
         DefaultConfiguration defaultConfiguration = new DefaultConfiguration();
         return defaultConfiguration;

@@ -1,5 +1,6 @@
 package ar.com.kfgodel.tostring.impl;
 
+import ar.com.kfgodel.tostring.impl.properties.ObjectField;
 import ar.com.kfgodel.tostring.impl.references.CalledReference;
 import ar.com.kfgodel.tostring.impl.references.ReferentiableObject;
 import ar.com.kfgodel.tostring.impl.renderer.PartialRenderer;
@@ -111,6 +112,8 @@ public class StringerRepresentation {
             return (PartialRenderer) MapRenderer.INSTANCE;
         } else if (object instanceof Map.Entry){
             return (PartialRenderer) MapEntryRenderer.INSTANCE;
+        } else if (object instanceof ObjectField){
+            return (PartialRenderer) ObjectFieldRenderer.INSTANCE;
         }
         return ObjectRenderer.INSTANCE;
     }
