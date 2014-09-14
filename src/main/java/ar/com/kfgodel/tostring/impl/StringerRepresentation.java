@@ -4,6 +4,7 @@ import ar.com.kfgodel.tostring.impl.properties.ObjectField;
 import ar.com.kfgodel.tostring.impl.references.CalledReference;
 import ar.com.kfgodel.tostring.impl.references.ReferentiableObject;
 import ar.com.kfgodel.tostring.impl.renderer.PartialRenderer;
+import ar.com.kfgodel.tostring.impl.renderer.RendererPerType;
 import ar.com.kfgodel.tostring.impl.renderer.partials.*;
 
 import java.util.*;
@@ -15,6 +16,11 @@ import java.util.*;
  * Created by kfgodel on 11/09/14.
  */
 public class StringerRepresentation {
+
+    /**
+     * Mapping between object types and their corresponding renderer
+     */
+    private static final RendererPerType RENDERER_PER_TYPE = RendererPerType.create();
 
     private IdentityHashMap<Object, Integer> knownReferences;
     private Set<Integer> calledReferences;
@@ -34,8 +40,16 @@ public class StringerRepresentation {
         }
         // It's a complex object
         return representPossibleCircularRef(object);
+    }
 
-
+    /**
+     * Tries to represent the given object if it's a primitive value
+     * @param object The object to represent
+     * @return A possible default string representation
+     */
+    private Optional<PendingRendering> treatAsPrimitive(Object object) {
+        Optional<PartialRenderer<Object>> primitiveRenderer = RENDERER_PER_TYPE.getBestPrimitiveRendererFor(object);
+        return primitiveRenderer.map((bestRenderer)-> PendingRendering.create(bestRenderer, object));
     }
 
     /**
@@ -48,7 +62,7 @@ public class StringerRepresentation {
         // Let's check if we know the object
         Integer knownReference = getKnownReferences().get(object);
         if(knownReference != null){
-            // This object was already represented. We take not of the call
+            // This object was already represented. We take note of the call being made
             this.getCalledReferences().add(knownReference);
             return ReferenceCallRenderer.INSTANCE.render(knownReference);
         }
@@ -60,35 +74,13 @@ public class StringerRepresentation {
     }
 
     /**
-     * Tries to represent the given object if it's a primitive value
-     * @param object The object to represent
-     * @return A possible default string representation
-     */
-    private Optional<PendingRendering> treatAsPrimitive(Object object) {
-        PartialRenderer<?> bestRenderer = null;
-        if(object == null){
-            bestRenderer = NullRenderer.INSTANCE;
-        } else if(object instanceof Number) {
-            bestRenderer = NumberRenderer.INSTANCE;
-        } else if(object instanceof  Character){
-            bestRenderer = CharRenderer.INSTANCE;
-        } else if(object instanceof CharSequence){
-            bestRenderer = CharSequenceRenderer.INSTANCE;
-        } else {
-            //Not renderable as primitive
-            return Optional.empty();
-        }
-        return Optional.of(PendingRendering.create(bestRenderer, object));
-    }
-
-    /**
      * Creates a string representation of the given object, knowing that is not a primitive value
      * @param referentiable The object to represent
      * @return A string representation
      */
     private String treatAsReferentiable(ReferentiableObject referentiable) {
         Object object = referentiable.getObject();
-        PartialRenderer<Object> renderer = pickBestRendererFor(object);
+        PartialRenderer<Object> renderer = RENDERER_PER_TYPE.getBestComplexRendererFor(object);
         String objectRepresentation = renderer.render(object);
         if(this.doesNotIncludeAReferenceCallTo(referentiable)){
             // There was no cyclic reference. No need to append ref number
@@ -96,26 +88,6 @@ public class StringerRepresentation {
         }
         CalledReference calledReference = CalledReference.create(referentiable, objectRepresentation);
         return CalledReferenceRenderer.INSTANCE.render(calledReference);
-    }
-
-    /**
-     * Selects the best renderer for a referentiable object
-     * @param object The object to render
-     * @return The best renderer
-     */
-    private PartialRenderer<Object> pickBestRendererFor(Object object) {
-        if(object.getClass().isArray()){
-            return (PartialRenderer) ArrayRenderer.INSTANCE;
-        } else if(object instanceof Collection){
-            return (PartialRenderer) CollectionRenderer.INSTANCE;
-        } else if (object instanceof Map){
-            return (PartialRenderer) MapRenderer.INSTANCE;
-        } else if (object instanceof Map.Entry){
-            return (PartialRenderer) MapEntryRenderer.INSTANCE;
-        } else if (object instanceof ObjectField){
-            return (PartialRenderer) ObjectFieldRenderer.INSTANCE;
-        }
-        return ObjectRenderer.INSTANCE;
     }
 
     /**

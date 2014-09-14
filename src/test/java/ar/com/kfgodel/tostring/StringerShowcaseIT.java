@@ -161,13 +161,22 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
                 assertThat(Stringer.representationOf(autoReference))
                         .isEqualTo("1∞·SelfReferencingObject«42»{\"referencing\": §1}");
             });
-            it("detection works on collections", ()->{
+            it("duplicate objects occupy less space on repetition", ()->{
+                List<ClassWithId> exampleList = new ArrayList<>();
+                ClassWithId duplicate = ClassWithId.create(42L);
+                exampleList.add(duplicate);
+                exampleList.add(duplicate);
+                exampleList.add(duplicate);
+                assertThat(Stringer.representationOf(exampleList))
+                        .isEqualTo("3#[2∞·ClassWithId«42», §2, §2]");
+            });
+            it("collections can be detected as circular too", ()->{
                 List<List> selfReferencingList = new ArrayList<>();
                 selfReferencingList.add(selfReferencingList);
                 assertThat(Stringer.representationOf(selfReferencingList))
                         .isEqualTo("1∞·1#[§1]");
             });
-            it("and circular references", ()->{
+            it("circular references are detected too", () -> {
                 CircularReferencingObject first = CircularReferencingObject.create(42);
                 CircularReferencingObject second = CircularReferencingObject.create(24);
                 first.setReferencing(second);
