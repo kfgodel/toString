@@ -130,21 +130,21 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
             it("object fields are represented like a JSON string", () -> {
                 Person fred = Person.createFred();
                 assertThat(Stringer.representationOf(fred))
-                        .isEqualTo("Person«1»{\"name\": \"Fred\", \"age\": 42, \"height\": 6.7}");
+                        .isEqualTo("Person«\"1\"»{\"name\": \"Fred\", \"age\": 42, \"height\": 6.7}");
             });
 
             describe("with too many properties", ()->{
                 it("objects fields are truncated with an ellipsis", () -> {
                     ManyProperties allison = ManyProperties.createAllison();
                     assertThat(Stringer.representationOf(allison))
-                            .isEqualTo("Person«\"allis\"»{\"name\": \"Allison\", \"property1\": \"value1\", \"property2\": \"value2\", ...}");
+                            .isEqualTo("ManyProperties«\"allis\"»{\"name\": \"Allison\", \"property1\": \"value1\", ...}");
                 });
                 it("null fields are omitted", ()->{
                     ManyProperties allison = ManyProperties.createAllison();
                     allison.setProperty1(null);
                     allison.setProperty2(null);
                     assertThat(Stringer.representationOf(allison))
-                            .isEqualTo("Person«\"allis\"»{\"name\": \"Allison\", \"property3\": \"value3\", \"property4\": \"value4\", ...}");
+                            .isEqualTo("ManyProperties«\"allis\"»{\"name\": \"Allison\", \"property3\": \"value3\", ...}");
 
                 });
             });
@@ -154,7 +154,7 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
             it("an integer is assigned to identify first representation", ()->{
                 SelfReferencingObject autoReference = SelfReferencingObject.create();
                 assertThat(Stringer.representationOf(autoReference))
-                        .startsWith("1∞SelfReferencingObject");
+                        .startsWith("1∞·SelfReferencingObject");
             });
             it("a call to first representation is used instead of a duplicate", ()->{
                 SelfReferencingObject autoReference = SelfReferencingObject.create();

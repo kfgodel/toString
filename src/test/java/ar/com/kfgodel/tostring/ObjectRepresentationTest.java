@@ -42,9 +42,7 @@ public class ObjectRepresentationTest extends JavaSpec<StringerTestContext> {
                         .doesNotContain("null");
             });
             it("include inherited fields", ()-> {
-                Person person = new Person() {
-                    private int ownField = 1;
-                };
+                SubPerson person = new SubPerson();
                 assertThat(Stringer.representationOf(person))
                         .contains("ownField")
                         .contains("name")

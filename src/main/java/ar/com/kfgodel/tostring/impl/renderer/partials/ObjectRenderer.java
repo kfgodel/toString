@@ -2,14 +2,19 @@ package ar.com.kfgodel.tostring.impl.renderer.partials;
 
 import ar.com.kfgodel.tostring.Stringer;
 import ar.com.kfgodel.tostring.impl.properties.ObjectField;
+import ar.com.kfgodel.tostring.impl.properties.ObjectRendering;
+import ar.com.kfgodel.tostring.impl.properties.RenderedObjectField;
 import ar.com.kfgodel.tostring.impl.renderer.PartialRenderer;
 import net.vidageek.mirror.dsl.ClassController;
 import net.vidageek.mirror.dsl.Mirror;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -40,7 +45,7 @@ public class ObjectRenderer implements PartialRenderer<Object> {
         renderObjectInto(builder, object);
         if(errorRaisedInCustomString != null){
             // We let the user know that something went wrong with custom string
-            builder.append("instead of ");
+            builder.append(" instead of ");
             builder.append(errorRaisedInCustomString.getClass().getSimpleName());
             builder.append(": ");
             builder.append(errorRaisedInCustomString.getMessage());
@@ -57,15 +62,28 @@ public class ObjectRenderer implements PartialRenderer<Object> {
         Class<?> objectClass = object.getClass();
         builder.append(objectClass.getSimpleName());
         builder.append(Stringer.CONFIGURATION.getOpeningIdSymbol());
-        builder.append(calculateIdValueFor(object));
+        List<Field> objectFields = new ArrayList<>(new Mirror().on(objectClass).reflectAll().fields());
+        Field idField = segregateIdFieldFrom(objectFields);
+        builder.append(calculateIdValueFor(object, idField));
         builder.append(Stringer.CONFIGURATION.getClosingIdSymbol());
-        List<Field> objectFields = new Mirror().on(objectClass).reflectAll().fields();
         if(objectFields.size() > 0){
             // Only if it has any fields we include a body
             builder.append(Stringer.CONFIGURATION.getOpeningHashSymbol());
             addContentTo(builder, object, objectFields);
             builder.append(Stringer.CONFIGURATION.getClosingHashSymbol());
         }
+    }
+
+    private Field segregateIdFieldFrom(List<Field> objectFields) {
+        Iterator<Field> fieldIterator = objectFields.iterator();
+        while(fieldIterator.hasNext()){
+            Field field = fieldIterator.next();
+            if(field.getName().equals("id")){
+                fieldIterator.remove();
+                return field;
+            }
+        }
+        return null;
     }
 
     /**
@@ -86,11 +104,10 @@ public class ObjectRenderer implements PartialRenderer<Object> {
     /**
      * Gets the id value of a field in the object or calculates it as the system hashcode
      * @param object The object to discriminate
+     * @param idField The optional id field on the object
      * @return The id value or a hashcode for the object
      */
-    private String calculateIdValueFor(Object object) {
-        Class<?> objectClass = object.getClass();
-        Field idField = new Mirror().on(objectClass).reflect().field("id");
+    private String calculateIdValueFor(Object object, Field idField) {
         // Let's try to get the id value, if it has one
         Object idValue = (idField == null)? null : new Mirror().on(object).get().field(idField);
         if(idValue != null){
@@ -102,28 +119,8 @@ public class ObjectRenderer implements PartialRenderer<Object> {
     }
 
     private void addContentTo(StringBuilder builder, Object object, List<Field> objectFields) {
-        int lowToleranceCardinality = Stringer.CONFIGURATION.getCardinalityForLowTolerance();
-        int contentSizeLimit = (objectFields.size() > lowToleranceCardinality)?  Stringer.CONFIGURATION.getLowToleranceSize() : Stringer.CONFIGURATION.getHighToleranceSize();
-
-        AtomicInteger counter = new AtomicInteger(1);
-        boolean limitExceeded = objectFields.stream()
-                .map((field) -> ObjectField.create(object, field))
-                .map((objectField)-> Stringer.representationOf(objectField))
-                .anyMatch((fieldRepresentation) -> {
-                    builder.append(fieldRepresentation);
-                    boolean isNotLastElement = counter.getAndIncrement() < objectFields.size();
-                    if (isNotLastElement) {
-                        //Is not the last, we need a separator
-                        builder.append(Stringer.CONFIGURATION.getSequenceElementSeparatorSymbol());
-                    }
-                    // End if we exceeded the limit
-                    return builder.length() > contentSizeLimit;
-                });
-        boolean beforeTheLastOne = counter.get() <= objectFields.size();
-        if(limitExceeded && beforeTheLastOne){
-            //Not all the content made it
-            builder.append(Stringer.CONFIGURATION.getTruncatedContentSymbol());
-        }
+        ObjectRendering rendering = ObjectRendering.create(object, objectFields);
+        rendering.process(builder);
     }
 
 }

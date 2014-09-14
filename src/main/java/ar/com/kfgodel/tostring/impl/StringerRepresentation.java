@@ -52,8 +52,8 @@ public class StringerRepresentation {
             this.getCalledReferences().add(knownReference);
             return ReferenceCallRenderer.INSTANCE.render(knownReference);
         }
-        // It's a new object, we create a new reference for it
-        Integer newReferenceNumber = getKnownReferences().size();
+        // It's a new object, we create a new reference for it (starting from 1)
+        Integer newReferenceNumber = getKnownReferences().size() + 1;
         getKnownReferences().put(object, newReferenceNumber);
         ReferentiableObject referentiable = ReferentiableObject.create(object, newReferenceNumber);
         return treatAsReferentiable(referentiable);

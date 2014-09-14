@@ -12,6 +12,7 @@ public class ObjectField {
 
     private Field field;
     private Object object;
+    private Object fieldValue;
 
     public Field getField() {
         return field;
@@ -33,6 +34,7 @@ public class ObjectField {
         ObjectField objectField = new ObjectField();
         objectField.field = field;
         objectField.object = object;
+        objectField.fieldValue = new Mirror().on(object).get().field(field);
         return objectField;
     }
 
@@ -41,6 +43,14 @@ public class ObjectField {
     }
 
     public Object getFieldValue() {
-        return new Mirror().on(this.object).get().field(this.field);
+        return this.fieldValue;
+    }
+
+    /**
+     * Indicates if this field value is null
+     * @return True if this field is null on the object
+     */
+    public boolean hasNullValue() {
+        return this.fieldValue == null;
     }
 }
