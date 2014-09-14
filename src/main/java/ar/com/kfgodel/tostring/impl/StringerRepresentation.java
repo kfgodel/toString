@@ -82,10 +82,10 @@ public class StringerRepresentation {
         Object object = referentiable.getObject();
         PartialRenderer<Object> renderer = RENDERER_PER_TYPE.getBestComplexRendererFor(object);
         String objectRepresentation = renderer.render(object);
-        if(this.doesNotIncludeAReferenceCallTo(referentiable)){
-            // There was no cyclic reference. No need to append ref number
-            return objectRepresentation;
-        }
+//        if(this.doesNotIncludeAReferenceCallTo(referentiable)){
+//            // There was no cyclic reference. No need to append ref number
+//            return objectRepresentation;
+//        }
         CalledReference calledReference = CalledReference.create(referentiable, objectRepresentation);
         return CalledReferenceRenderer.INSTANCE.render(calledReference);
     }

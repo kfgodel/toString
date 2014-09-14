@@ -32,7 +32,7 @@ public class MapRenderer implements PartialRenderer<Map<Object, Object>> {
 
         AtomicInteger counter = new AtomicInteger(1);
         boolean limitExceeded = map.entrySet().stream()
-                .map((object) -> Stringer.representationOf(object))
+                .map((entry) -> MapEntryRenderer.INSTANCE.render(entry))
                 .anyMatch((objectRepresentation) -> {
                     builder.append(objectRepresentation);
                     boolean isNotLastElement = counter.getAndIncrement() < map.size();

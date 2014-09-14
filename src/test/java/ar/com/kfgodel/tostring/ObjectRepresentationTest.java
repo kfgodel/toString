@@ -20,7 +20,7 @@ public class ObjectRepresentationTest extends JavaSpec<StringerTestContext> {
                 OverridedHashcodeObject overridingObject = new OverridedHashcodeObject();
                 String nativeHascode = Integer.toHexString(System.identityHashCode(overridingObject));
                 assertThat(Stringer.representationOf(overridingObject))
-                        .isEqualTo("OverridedHashcodeObject«" + nativeHascode + "»");
+                        .contains("OverridedHashcodeObject«" + nativeHascode + "»");
             });
         });
         describe("object fields", ()->{
@@ -53,7 +53,7 @@ public class ObjectRepresentationTest extends JavaSpec<StringerTestContext> {
             it("is omitted if no fields", ()->{
                 ClassWithNoFields object = new ClassWithNoFields();
                 assertThat(Stringer.representationOf(object))
-                        .startsWith("ClassWithNoFields«")
+                        .startsWith("1º·ClassWithNoFields«")
                         .endsWith("»");
             });
         });

@@ -25,7 +25,7 @@ public class DefaultConfiguration implements StringerConfiguration {
 
     @Override
     public String getReferenceDeclarationSymbol() {
-        return "∞·";
+        return "º·";
     }
 
     @Override

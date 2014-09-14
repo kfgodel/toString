@@ -1,6 +1,7 @@
 package ar.com.kfgodel.tostring.impl.properties;
 
 import ar.com.kfgodel.tostring.Stringer;
+import ar.com.kfgodel.tostring.impl.renderer.partials.ObjectFieldRenderer;
 
 /**
  * This type represents and object field whose representation has already been done, and we can know its size
@@ -18,7 +19,7 @@ public class RenderedObjectField {
     public static RenderedObjectField create(ObjectField objectField) {
         RenderedObjectField rendered = new RenderedObjectField();
         rendered.objectField = objectField;
-        rendered.representation = Stringer.representationOf(objectField);
+        rendered.representation = ObjectFieldRenderer.INSTANCE.render(objectField);
         return rendered;
     }
 

@@ -24,9 +24,9 @@ public class CollectionRepresentationTest extends JavaSpec<StringerTestContext> 
             beforeEach(()->{
                 context().object(ArrayList::new);
             });
-            it("indicate size as first datum", () -> {
+            it("indicate size as part of the representation", () -> {
                 assertThat(Stringer.representationOf(context().object()))
-                        .startsWith("0#");
+                        .contains("0#");
             });
             it("are represented using enclosing brackets", ()->{
                 assertThat(Stringer.representationOf(context().object()))
@@ -59,7 +59,7 @@ public class CollectionRepresentationTest extends JavaSpec<StringerTestContext> 
                 list.add("Lorem ipsum dolor sit amet.");
                 list.add("Lorem ipsum dolor sit amet.");
                 assertThat(Stringer.representationOf(list))
-                        .isEqualTo("3#[\"Lorem ipsum dolor sit amet.\", \"Lorem ipsum dolor sit amet.\", \"Lorem ipsum dolor sit amet.\"]");
+                        .isEqualTo("1º·3#[\"Lorem ipsum dolor sit amet.\", \"Lorem ipsum dolor sit amet.\", \"Lorem ipsum dolor sit amet.\"]");
             });
         });
 
@@ -67,9 +67,9 @@ public class CollectionRepresentationTest extends JavaSpec<StringerTestContext> 
             beforeEach(()->{
                 context().object(TreeMap::new);
             });
-            it("indicate size as first datum", () -> {
+            it("indicate size as part of the representation", () -> {
                 assertThat(Stringer.representationOf(context().object()))
-                        .startsWith("0#");
+                        .contains("0#");
             });
             it("are represented with curly braces and key/value pairs", ()->{
                 assertThat(Stringer.representationOf(context().object()))
@@ -101,12 +101,12 @@ public class CollectionRepresentationTest extends JavaSpec<StringerTestContext> 
                 map.put("Lorem ipsum3", "Lorem ipsum dolor sit amet.");
                 map.put("Lorem ipsum4", "Lorem ipsum dolor sit amet.");
                 assertThat(Stringer.representationOf(context().object()))
-                        .isEqualTo("4#{\"Lorem ipsum1\": \"Lorem ipsum dolor sit amet.\", \"Lorem ipsum2\": \"Lorem ipsum dolor sit amet.\", ...}");
+                        .isEqualTo("1º·4#{\"Lorem ipsum1\": \"Lorem ipsum dolor sit amet.\", \"Lorem ipsum2\": \"Lorem ipsum dolor sit amet.\", ...}");
             });
             it("are omitted if they have more than 5 elements and their representation exceeds 40 chars", ()->{
                 Map<Double, Integer> longMap = createLongMap();
                 assertThat(Stringer.representationOf(longMap))
-                        .isEqualTo("100#{0.0: 0, 1.0: 1, 2.0: 2, 3.0: 3, 4.0: 4, 5.0: 5, 6.0: 6, ...}");
+                        .isEqualTo("1º·100#{0.0: 0, 1.0: 1, 2.0: 2, 3.0: 3, 4.0: 4, 5.0: 5, 6.0: 6, ...}");
 
             });
             it("are not omitted if they have 5 or less elements and don't exceed 60 chars", ()->{
@@ -114,7 +114,7 @@ public class CollectionRepresentationTest extends JavaSpec<StringerTestContext> 
                 map.put("Lorem ipsum1", "Lorem ipsum dolor sit amet.");
                 map.put("Lorem ipsum2", "Lorem ipsum dolor sit amet.");
                 assertThat(Stringer.representationOf(context().object()))
-                        .isEqualTo("2#{\"Lorem ipsum1\": \"Lorem ipsum dolor sit amet.\", \"Lorem ipsum2\": \"Lorem ipsum dolor sit amet.\"}");
+                        .isEqualTo("1º·2#{\"Lorem ipsum1\": \"Lorem ipsum dolor sit amet.\", \"Lorem ipsum2\": \"Lorem ipsum dolor sit amet.\"}");
             });
         });
 
