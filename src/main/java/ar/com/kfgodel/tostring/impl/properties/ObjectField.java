@@ -14,22 +14,6 @@ public class ObjectField {
     private Object object;
     private Object fieldValue;
 
-    public Field getField() {
-        return field;
-    }
-
-    public void setField(Field field) {
-        this.field = field;
-    }
-
-    public Object getObject() {
-        return object;
-    }
-
-    public void setObject(Object object) {
-        this.object = object;
-    }
-
     public static ObjectField create(Object object, Field field) {
         ObjectField objectField = new ObjectField();
         objectField.field = field;

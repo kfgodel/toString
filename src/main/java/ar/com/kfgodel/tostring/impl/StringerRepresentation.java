@@ -82,22 +82,8 @@ public class StringerRepresentation {
         Object object = referentiable.getObject();
         PartialRenderer<Object> renderer = RENDERER_PER_TYPE.getBestComplexRendererFor(object);
         String objectRepresentation = renderer.render(object);
-//        if(this.doesNotIncludeAReferenceCallTo(referentiable)){
-//            // There was no cyclic reference. No need to append ref number
-//            return objectRepresentation;
-//        }
         CalledReference calledReference = CalledReference.create(referentiable, objectRepresentation);
         return CalledReferenceRenderer.INSTANCE.render(calledReference);
-    }
-
-    /**
-     * Indicates if the given object was referenced and a call to its references was made in this representation
-     * @param referentiable The object to check as a reference
-     * @return False is there was no cyclic reference to the object
-     */
-    private boolean doesNotIncludeAReferenceCallTo(ReferentiableObject referentiable) {
-        Integer objectRefNumber = referentiable.getReferenceNumber();
-        return !getCalledReferences().contains(objectRefNumber);
     }
 
     public Set<Integer> getCalledReferences() {

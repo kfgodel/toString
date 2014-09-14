@@ -13,16 +13,8 @@ public class CalledReference {
         return referenceNumber;
     }
 
-    public void setReferenceNumber(Integer referenceNumber) {
-        this.referenceNumber = referenceNumber;
-    }
-
     public String getRepresentation() {
         return representation;
-    }
-
-    public void setRepresentation(String representation) {
-        this.representation = representation;
     }
 
     public static CalledReference create(ReferentiableObject referentiable, String representation) {

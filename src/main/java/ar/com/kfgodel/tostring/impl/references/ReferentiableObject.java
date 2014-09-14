@@ -13,16 +13,8 @@ public class ReferentiableObject {
         return object;
     }
 
-    public void setObject(Object object) {
-        this.object = object;
-    }
-
     public Integer getReferenceNumber() {
         return referenceNumber;
-    }
-
-    public void setReferenceNumber(Integer referenceNumber) {
-        this.referenceNumber = referenceNumber;
     }
 
     public static ReferentiableObject create(Object object, Integer refNumber) {

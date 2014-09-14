@@ -43,6 +43,11 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
                         .isEqualTo(String.valueOf(-2000.0));
             });
 
+            it("characters are surrounded with single quote", ()->{
+                assertThat(Stringer.representationOf('a'))
+                        .isEqualTo("'a'");
+            });
+
         });
 
         describe("for non primitive values", ()->{
