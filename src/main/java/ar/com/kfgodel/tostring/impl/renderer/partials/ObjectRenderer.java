@@ -63,6 +63,7 @@ public class ObjectRenderer implements PartialRenderer<Object> {
         builder.append(objectClass.getSimpleName());
         builder.append(Stringer.CONFIGURATION.getOpeningIdSymbol());
         List<Field> objectFields = new ArrayList<>(new Mirror().on(objectClass).reflectAll().fields());
+        filterIgnoredFields(objectFields);
         Field idField = segregateIdFieldFrom(objectFields);
         builder.append(calculateIdValueFor(object, idField));
         builder.append(Stringer.CONFIGURATION.getClosingIdSymbol());
@@ -71,6 +72,21 @@ public class ObjectRenderer implements PartialRenderer<Object> {
             builder.append(Stringer.CONFIGURATION.getOpeningHashSymbol());
             addContentTo(builder, object, objectFields);
             builder.append(Stringer.CONFIGURATION.getClosingHashSymbol());
+        }
+    }
+
+
+    /**
+     * Removes fields that are banned from representation
+     * @param objectFields The fields to omit during representation
+     */
+    private void filterIgnoredFields(List<Field> objectFields) {
+        for (Iterator<Field> iterator = objectFields.iterator(); iterator.hasNext(); ) {
+            Field next = iterator.next();
+            if(next.getName().equals("$jacocoData")){
+                // Jacoco adds this on CI, and we don't want it
+                iterator.remove();
+            }
         }
     }
 
