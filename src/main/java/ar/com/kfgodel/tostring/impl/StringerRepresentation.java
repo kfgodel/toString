@@ -3,6 +3,7 @@ package ar.com.kfgodel.tostring.impl;
 import ar.com.kfgodel.tostring.impl.properties.ObjectField;
 import ar.com.kfgodel.tostring.impl.references.CalledReference;
 import ar.com.kfgodel.tostring.impl.references.ReferentiableObject;
+import ar.com.kfgodel.tostring.impl.render.RenderingBuffer;
 import ar.com.kfgodel.tostring.impl.renderer.PartialRenderer;
 import ar.com.kfgodel.tostring.impl.renderer.RendererPerType;
 import ar.com.kfgodel.tostring.impl.renderer.partials.*;
@@ -103,5 +104,13 @@ public class StringerRepresentation {
     public static StringerRepresentation create(){
         StringerRepresentation representation = new StringerRepresentation();
         return representation;
+    }
+
+    /**
+     * Represents the given object into a buffer according to this representation state and configuration
+     * @param object The object to represent
+     * @return The buffer containing the object representation
+     */
+    public RenderingBuffer render(Object object) {
     }
 }

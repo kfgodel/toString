@@ -1,5 +1,6 @@
 package ar.com.kfgodel.tostring.impl;
 
+import ar.com.kfgodel.tostring.Stringer;
 import ar.com.kfgodel.tostring.StringerConfiguration;
 
 /**
@@ -91,6 +92,15 @@ public class DefaultConfiguration implements StringerConfiguration {
     @Override
     public String getClosingIdSymbol() {
         return "»";
+    }
+
+    @Override
+    public int calculateSizeLimitFor(int elementCount) {
+        int lowToleranceCardinality = this.getCardinalityForLowTolerance();
+        if(elementCount > lowToleranceCardinality){
+            return this.getLowToleranceSize();
+        }
+        return this.getHighToleranceSize();
     }
 
     public static DefaultConfiguration create() {

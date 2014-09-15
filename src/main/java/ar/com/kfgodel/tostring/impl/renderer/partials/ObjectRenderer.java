@@ -27,7 +27,7 @@ public class ObjectRenderer implements PartialRenderer<Object> {
 
     @Override
     public String render(Object object) {
-        // If defined we try its own definition
+        // If defined we try its own toString
         String customDefinedString = null;
         Exception errorRaisedInCustomString = null;
         try {
