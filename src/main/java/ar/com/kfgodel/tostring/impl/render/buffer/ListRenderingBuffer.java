@@ -11,12 +11,13 @@ import java.util.List;
 public class ListRenderingBuffer implements RenderingBuffer {
 
     private List<Object> parts;
+    private Object lastPart;
 
     @Override
     public String printOnString() {
-        List<String> stringSegments = flattenParts();
+        List<CharSequence> stringSegments = flattenParts();
         StringBuilder builder = new StringBuilder();
-        for (String stringSegment : stringSegments) {
+        for (CharSequence stringSegment : stringSegments) {
             builder.append(stringSegment);
         }
         return builder.toString();
@@ -26,7 +27,7 @@ public class ListRenderingBuffer implements RenderingBuffer {
     public void addPart(Object part) {
         if(part instanceof DelayedPartitionable){
             // We delay its partition until rendering time
-            parts.add(part);
+            createPart(part);
         } else if (part instanceof RenderingBuffer){
             // We flatten other buffer into us
             List<Object> otherBuffer = ((RenderingBuffer) part).getParts();
@@ -34,8 +35,47 @@ public class ListRenderingBuffer implements RenderingBuffer {
         } else{
             // Everything else should be a String
             String stringed = String.valueOf(part);
-            parts.add(stringed);
+            this.compactWithLastPart(stringed);
         }
+    }
+
+    /**
+     * We try to append the given string to the last segment, thus reducing the number of parts in this buffer.
+     * If the last segment is a String or StringBuilder we can append this new sstring in a single part
+     *
+     * @param addedText The added text
+     */
+    private void compactWithLastPart(String addedText) {
+        Object lastPart = getLastPart();
+        if (lastPart instanceof StringBuilder) {
+            // We can append to it
+            ((StringBuilder) lastPart).append(addedText);
+        } else if (lastPart instanceof String) {
+            //We can replace it with a joined builder
+            this.joinLastWithBuilder((String) lastPart, addedText);
+        } else {
+            this.createPart(addedText);
+        }
+    }
+
+    /**
+     * Replaces last part of this buffer with a joined StringBuilder of the two strings
+     * @param lastPart Current last part
+     * @param addedText The added text
+     */
+    private void joinLastWithBuilder(String lastPart, String addedText) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(lastPart);
+        builder.append(addedText);
+        this.parts.set(this.getLastIndex(), builder);
+    }
+
+    /**
+     * Creates a new part for the given object as is
+     * @param part The object to be considered a new part of this buffer
+     */
+    private void createPart(Object part) {
+        parts.add(part);
     }
 
     @Override
@@ -44,9 +84,9 @@ public class ListRenderingBuffer implements RenderingBuffer {
         for (Object part : parts) {
             int partSize;
             if(part instanceof CompositeRenderPart){
-                partSize = ((CompositeRenderPart) part).getEstimatedSize();
+                partSize = ((DelayedPartitionable) part).getEstimatedSize();
             }else{
-                partSize = ((String)part).length();
+                partSize = ((CharSequence)part).length();
             }
             totalSize += partSize;
         }
@@ -57,8 +97,8 @@ public class ListRenderingBuffer implements RenderingBuffer {
      * Creates a list of strings flattening any part that is composed of other parts
      * @return The list of strings ready to print
      */
-    private List<String> flattenParts() {
-        List<String> flattened = new ArrayList<>();
+    private List<CharSequence> flattenParts() {
+        List<CharSequence> flattened = new ArrayList<>();
         LinkedList<Object> pendingParts = new LinkedList<Object>(this.parts);
         while(!pendingParts.isEmpty()){
             Object currentPart = pendingParts.pop();
@@ -69,7 +109,7 @@ public class ListRenderingBuffer implements RenderingBuffer {
                 continue;
             }
             // Everything else should already be a String
-            String stringValue = (String) currentPart;
+            CharSequence stringValue = (CharSequence) currentPart;
             flattened.add(stringValue);
         }
         return flattened;
@@ -84,5 +124,23 @@ public class ListRenderingBuffer implements RenderingBuffer {
     @Override
     public List<Object> getParts() {
         return this.parts;
+    }
+
+    /**
+     * Returns the last part of this buffer or null if none available
+     * @return The last part or null
+     */
+    public Object getLastPart() {
+        int lastIndex = getLastIndex();
+        if(lastIndex < 0){
+            // There's no last part yet
+            return null;
+        }
+        Object lastPart = this.parts.get(lastIndex);
+        return lastPart;
+    }
+
+    private int getLastIndex() {
+        return this.parts.size() - 1;
     }
 }
