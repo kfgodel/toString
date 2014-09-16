@@ -1,5 +1,7 @@
 package ar.com.kfgodel.tostring.impl.render;
 
+import ar.com.kfgodel.tostring.impl.render.buffer.RenderingBuffer;
+
 /**
  * This type represents a type renderer that can represent a specific type into a buffer
  * Created by kfgodel on 14/09/14.

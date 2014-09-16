@@ -3,11 +3,11 @@ package ar.com.kfgodel.tostring.impl;
 import ar.com.kfgodel.tostring.impl.references.RepresentationReferences;
 import ar.com.kfgodel.tostring.impl.references.IdentityReferences;
 import ar.com.kfgodel.tostring.impl.render.PartialBufferRenderer;
-import ar.com.kfgodel.tostring.impl.render.RenderingBuffer;
-import ar.com.kfgodel.tostring.impl.render.imple.ListRenderingBuffer;
-import ar.com.kfgodel.tostring.impl.render.imple.OptionalReferenceNumberPart;
-import ar.com.kfgodel.tostring.impl.render.imple.ReferenceCallBufferRenderer;
-import ar.com.kfgodel.tostring.impl.renderer.RendererPerType;
+import ar.com.kfgodel.tostring.impl.render.buffer.RenderingBuffer;
+import ar.com.kfgodel.tostring.impl.render.buffer.ListRenderingBuffer;
+import ar.com.kfgodel.tostring.impl.render.renderers.references.OptionalReferenceNumberPart;
+import ar.com.kfgodel.tostring.impl.render.renderers.references.ReferenceCallBufferRenderer;
+import ar.com.kfgodel.tostring.impl.render.renderers.RendererPerType;
 
 import java.util.*;
 
