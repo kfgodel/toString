@@ -24,10 +24,14 @@ public class ListRenderingBuffer implements RenderingBuffer {
 
     @Override
     public void addPart(Object part) {
-        if(part instanceof CompositeRenderPart){
-            // We add composites as they come (we will decompose them later)
+        if(part instanceof DelayedPartitionable){
+            // We delay its partition until rendering time
             parts.add(part);
-        }else{
+        } else if (part instanceof RenderingBuffer){
+            // We flatten other buffer into us
+            List<Object> otherBuffer = ((RenderingBuffer) part).getParts();
+            otherBuffer.forEach(this::addPart);
+        } else{
             // Everything else should be a String
             String stringed = String.valueOf(part);
             parts.add(stringed);

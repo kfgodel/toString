@@ -2,7 +2,7 @@ package ar.com.kfgodel.tostring.impl.render.renderers.references;
 
 import ar.com.kfgodel.tostring.Stringer;
 import ar.com.kfgodel.tostring.impl.references.RepresentationReferences;
-import ar.com.kfgodel.tostring.impl.render.buffer.CompositeRenderPart;
+import ar.com.kfgodel.tostring.impl.render.buffer.DelayedPartitionable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +13,7 @@ import java.util.Optional;
  * This type represents an optional reference number used for referentiable objects as part of their representation
  * Created by kfgodel on 14/09/14.
  */
-public class OptionalReferenceNumberPart implements CompositeRenderPart {
+public class OptionalReferenceNumberPart implements DelayedPartitionable {
 
 
     private RepresentationReferences references;
