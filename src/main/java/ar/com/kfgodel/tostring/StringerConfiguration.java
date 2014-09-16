@@ -92,4 +92,11 @@ public interface StringerConfiguration {
      * @return The symbol used to end a discriminator id
      */
     String getClosingIdSymbol();
+
+    /**
+     * Calculates which limit to be used in size according to the amount of elements to be represented
+     * @param elementCount The amount of elements to represent
+     * @return The limit in characters to use
+     */
+    int calculateSizeLimitFor(int elementCount);
 }

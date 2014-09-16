@@ -1,10 +1,14 @@
-package ar.com.kfgodel.tostring.impl.renderer;
+package ar.com.kfgodel.tostring.impl.render.renderers;
 
-import ar.com.kfgodel.tostring.impl.PendingRendering;
-import ar.com.kfgodel.tostring.impl.properties.ObjectField;
-import ar.com.kfgodel.tostring.impl.renderer.partials.*;
+import ar.com.kfgodel.tostring.impl.render.PartialBufferRenderer;
+import ar.com.kfgodel.tostring.impl.render.renderers.collections.ArrayBufferRenderer;
+import ar.com.kfgodel.tostring.impl.render.renderers.collections.CollectionBufferRenderer;
+import ar.com.kfgodel.tostring.impl.render.renderers.collections.MapBufferRenderer;
+import ar.com.kfgodel.tostring.impl.render.renderers.primitives.CharBufferRenderer;
+import ar.com.kfgodel.tostring.impl.render.renderers.primitives.CharSequenceBufferRenderer;
+import ar.com.kfgodel.tostring.impl.render.renderers.primitives.NullBufferRenderer;
+import ar.com.kfgodel.tostring.impl.render.renderers.primitives.NumberBufferRenderer;
 
-import javax.lang.model.type.NullType;
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -14,8 +18,9 @@ import java.util.*;
  */
 public class RendererPerType {
 
-    private Map<Class<?>, PartialRenderer<Object>> primitiveRenderers;
-    private Map<Class<?>, PartialRenderer<Object>> complexRenderers;
+    private Map<Class<?>, PartialBufferRenderer<Object>> primitiveRenderers;
+    private Map<Class<?>, PartialBufferRenderer<Object>> complexRenderers;
+    private PartialBufferRenderer<Object> objectRenderer;
 
     public static RendererPerType create() {
         RendererPerType rendererPerType = new RendererPerType();
@@ -29,6 +34,7 @@ public class RendererPerType {
     private void initializeMappings() {
         this.initializePrimitiveMappings();
         this.initializeComplexMappings();
+        this.objectRenderer = ObjectBufferRenderer.create();
     }
 
     /**
@@ -36,11 +42,9 @@ public class RendererPerType {
      */
     private void initializeComplexMappings() {
         this.complexRenderers = new LinkedHashMap<>();
-        this.complexRenderers.put(Array.class,(PartialRenderer) ArrayRenderer.INSTANCE);
-        this.complexRenderers.put(Collection.class,(PartialRenderer) CollectionRenderer.INSTANCE);
-        this.complexRenderers.put(Map.class,(PartialRenderer) MapRenderer.INSTANCE);
-        this.complexRenderers.put(Map.Entry.class, (PartialRenderer) MapEntryRenderer.INSTANCE);
-        this.complexRenderers.put(ObjectField.class, (PartialRenderer) ObjectFieldRenderer.INSTANCE);
+        this.complexRenderers.put(Array.class,(PartialBufferRenderer) ArrayBufferRenderer.create());
+        this.complexRenderers.put(Collection.class,(PartialBufferRenderer) CollectionBufferRenderer.create());
+        this.complexRenderers.put(Map.class,(PartialBufferRenderer) MapBufferRenderer.create());
     }
 
     /**
@@ -48,10 +52,10 @@ public class RendererPerType {
      */
     private void initializePrimitiveMappings() {
         this.primitiveRenderers = new LinkedHashMap<>();
-        this.primitiveRenderers.put(Void.class, (PartialRenderer) NullRenderer.INSTANCE);
-        this.primitiveRenderers.put(Number.class, (PartialRenderer) NumberRenderer.INSTANCE);
-        this.primitiveRenderers.put(Character.class, (PartialRenderer) CharRenderer.INSTANCE);
-        this.primitiveRenderers.put(CharSequence.class, (PartialRenderer) CharSequenceRenderer.INSTANCE);
+        this.primitiveRenderers.put(Void.class, (PartialBufferRenderer) NullBufferRenderer.create());
+        this.primitiveRenderers.put(Number.class, (PartialBufferRenderer) NumberBufferRenderer.create());
+        this.primitiveRenderers.put(Character.class, (PartialBufferRenderer) CharBufferRenderer.create());
+        this.primitiveRenderers.put(CharSequence.class, (PartialBufferRenderer) CharSequenceBufferRenderer.create());
     }
 
     /**
@@ -59,7 +63,7 @@ public class RendererPerType {
      * @param object The object to render
      * @return The optional found rendere, or an empty optional if object is not a primitive
      */
-    public Optional<PartialRenderer<Object>> getBestPrimitiveRendererFor(Object object) {
+    public Optional<PartialBufferRenderer<Object>> getBestPrimitiveRendererFor(Object object) {
         Class<?> objectType;
         if(object == null){
             // Null doesn't have a class. We force one
@@ -76,12 +80,12 @@ public class RendererPerType {
      * @param objectType The type to find a renderer for
      * @return The best renderer found for a super type of the given type, or an empty optional
      */
-    private Optional<PartialRenderer<Object>> findBestRendererIn(Map<Class<?>, PartialRenderer<Object>> mappingsMap, Class<?> objectType) {
-        Set<Map.Entry<Class<?>, PartialRenderer<Object>>> mappings = mappingsMap.entrySet();
-        for (Map.Entry<Class<?>, PartialRenderer<Object>> mapping : mappings) {
+    private Optional<PartialBufferRenderer<Object>> findBestRendererIn(Map<Class<?>, PartialBufferRenderer<Object>> mappingsMap, Class<?> objectType) {
+        Set<Map.Entry<Class<?>, PartialBufferRenderer<Object>>> mappings = mappingsMap.entrySet();
+        for (Map.Entry<Class<?>, PartialBufferRenderer<Object>> mapping : mappings) {
             Class<?> mappedType = mapping.getKey();
             if(mappedType.isAssignableFrom(objectType)){
-                PartialRenderer<Object> bestRenderer = mapping.getValue();
+                PartialBufferRenderer<Object> bestRenderer = mapping.getValue();
                 return Optional.of(bestRenderer);
             }
         }
@@ -94,13 +98,13 @@ public class RendererPerType {
      * @param object The object to render
      * @return The selected best renderer
      */
-    public PartialRenderer<Object> getBestComplexRendererFor(Object object) {
+    public PartialBufferRenderer<Object> getBestComplexRendererFor(Object object) {
         Class<?> objectType = object.getClass();
         if(objectType.isArray()){
             // Arrays don't have a common ancestor, we force one
             objectType = Array.class;
         }
-        Optional<PartialRenderer<Object>> bestRender = findBestRendererIn(this.complexRenderers, objectType);
-        return bestRender.orElse(ObjectRenderer.INSTANCE);
+        Optional<PartialBufferRenderer<Object>> bestRender = findBestRendererIn(this.complexRenderers, objectType);
+        return bestRender.orElse(this.objectRenderer);
     }
 }

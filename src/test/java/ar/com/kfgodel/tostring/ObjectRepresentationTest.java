@@ -35,12 +35,6 @@ public class ObjectRepresentationTest extends JavaSpec<StringerTestContext> {
                 assertThat(Stringer.representationOf(object))
                         .contains("null");
             });
-            it("null values are omitted if big representation", () -> {
-                ManyProperties object = ManyProperties.createAllison();
-                object.setProperty1(null);
-                assertThat(Stringer.representationOf(object))
-                        .doesNotContain("null");
-            });
             it("include inherited fields", ()-> {
                 SubPerson person = new SubPerson();
                 assertThat(Stringer.representationOf(person))
@@ -53,8 +47,7 @@ public class ObjectRepresentationTest extends JavaSpec<StringerTestContext> {
             it("is omitted if no fields", ()->{
                 ClassWithNoFields object = new ClassWithNoFields();
                 assertThat(Stringer.representationOf(object))
-                        .startsWith("1º·ClassWithNoFields«")
-                        .endsWith("»");
+                        .doesNotContain("{").doesNotContain("}");
             });
         });
     }
