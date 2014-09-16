@@ -195,6 +195,13 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
                 assertThat(Stringer.representationOf(faultyToStringObject))
                         .isEqualTo("FaultyToStringObject«42»{\"usedInToString\": null} instead of NullPointerException: null");
             });
+
+            it("also has a reference number", ()->{
+                CustomToStringObject customStringObject = CustomToStringObject.create();
+                List<CustomToStringObject> listWithDuplicate = Arrays.asList(customStringObject, customStringObject);
+                assertThat(Stringer.representationOf(listWithDuplicate))
+                        .isEqualTo("2#[1º·TaDa!, §1]");
+            });
         });
     }
 
