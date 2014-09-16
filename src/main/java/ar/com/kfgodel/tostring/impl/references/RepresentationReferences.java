@@ -13,4 +13,11 @@ public interface RepresentationReferences {
      * @return The number assigned to identify it, or empty optional if object was not referenced from others
      */
     Optional<Integer> getNumberUsedToReference(Object referentiable);
+
+    /**
+     * Registers a new call made to the given object returning an identifier is teh object was already referenced in the representation
+     * @param object The object to register as referenced in the representation
+     * @return The reference number given for this object on previous reference
+     */
+    Optional<Integer> makeReferenceTo(Object object);
 }

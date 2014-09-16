@@ -14,4 +14,10 @@ public class NullBufferRenderer implements PartialBufferRenderer<Void> {
         buffer.addPart("null");
         return buffer;
     }
+
+    public static NullBufferRenderer create() {
+        NullBufferRenderer nullBufferRenderer = new NullBufferRenderer();
+        return nullBufferRenderer;
+    }
+
 }

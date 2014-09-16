@@ -19,7 +19,11 @@ public class MapBufferRenderer implements PartialBufferRenderer<Map<Object, Obje
 
     @Override
     public RenderingBuffer render(Map<Object, Object> value) {
-        return sequenceRenderer.render(value.entrySet().iterator(), value.size());
+        ListRenderingBuffer buffer = ListRenderingBuffer.create();
+        int mapSize = value.size();
+        CollectionPrefixAction.INSTANCE.accept(buffer, mapSize);
+        sequenceRenderer.render(buffer, value.entrySet().iterator(), mapSize);
+        return buffer;
     }
 
     public static MapBufferRenderer create() {
@@ -27,7 +31,8 @@ public class MapBufferRenderer implements PartialBufferRenderer<Map<Object, Obje
         renderer.sequenceRenderer = SequenceBufferRenderer.create(
                 Stringer.CONFIGURATION.getOpeningHashSymbol(),
                 Stringer.CONFIGURATION.getClosingHashSymbol(),
-                RecursiveRenderKeyAndValueIntoBuffer.INSTANCE);
+                RecursiveRenderKeyAndValueIntoBuffer.INSTANCE,
+                false);
         return renderer;
     }
 }

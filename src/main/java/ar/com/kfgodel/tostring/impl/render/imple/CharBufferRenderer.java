@@ -19,4 +19,10 @@ public class CharBufferRenderer implements PartialBufferRenderer<Character> {
         buffer.addPart(quotingSymbol);
         return buffer;
     }
+
+    public static CharBufferRenderer create() {
+        CharBufferRenderer charBufferRenderer = new CharBufferRenderer();
+        return charBufferRenderer;
+    }
+
 }

@@ -1,12 +1,13 @@
 package ar.com.kfgodel.tostring.impl;
 
-import ar.com.kfgodel.tostring.impl.properties.ObjectField;
-import ar.com.kfgodel.tostring.impl.references.CalledReference;
-import ar.com.kfgodel.tostring.impl.references.ReferentiableObject;
+import ar.com.kfgodel.tostring.impl.references.RepresentationReferences;
+import ar.com.kfgodel.tostring.impl.references.IdentityReferences;
+import ar.com.kfgodel.tostring.impl.render.PartialBufferRenderer;
 import ar.com.kfgodel.tostring.impl.render.RenderingBuffer;
-import ar.com.kfgodel.tostring.impl.renderer.PartialRenderer;
+import ar.com.kfgodel.tostring.impl.render.imple.ListRenderingBuffer;
+import ar.com.kfgodel.tostring.impl.render.imple.OptionalReferenceNumberPart;
+import ar.com.kfgodel.tostring.impl.render.imple.ReferenceCallBufferRenderer;
 import ar.com.kfgodel.tostring.impl.renderer.RendererPerType;
-import ar.com.kfgodel.tostring.impl.renderer.partials.*;
 
 import java.util.*;
 
@@ -23,34 +24,22 @@ public class StringerRepresentation {
      */
     private static final RendererPerType RENDERER_PER_TYPE = RendererPerType.create();
 
-    private IdentityHashMap<Object, Integer> knownReferences;
-    private Set<Integer> calledReferences;
+    /**
+     * Renderer for references calls
+     */
+    private static final ReferenceCallBufferRenderer REFERENCE_CALL_BUFFER_RENDERER = ReferenceCallBufferRenderer.create();
+
+    private RepresentationReferences references;
+
 
     /**
-     * Returns the representation of the given object
+     * Returns the representation of the given object as a String
      * @param object The object to represent
      * @return The created state representation
      */
     public String represent(Object object) {
-        //Because primitive values can't do circular references and they don't require extra resources
-        // for conversion, we check that first case to optimize memory and processor
-        Optional<PendingRendering> pendingRendering = treatAsPrimitive(object);
-        if(pendingRendering.isPresent()){
-            // It was a primitive value
-            return pendingRendering.get().resolve();
-        }
-        // It's a complex object
-        return representPossibleCircularRef(object);
-    }
-
-    /**
-     * Tries to represent the given object if it's a primitive value
-     * @param object The object to represent
-     * @return A possible default string representation
-     */
-    private Optional<PendingRendering> treatAsPrimitive(Object object) {
-        Optional<PartialRenderer<Object>> primitiveRenderer = RENDERER_PER_TYPE.getBestPrimitiveRendererFor(object);
-        return primitiveRenderer.map((bestRenderer)-> PendingRendering.create(bestRenderer, object));
+        RenderingBuffer rendered = this.render(object);
+        return rendered.printOnString();
     }
 
     /**
@@ -59,50 +48,36 @@ public class StringerRepresentation {
      * @param object The object to represent
      * @return The representation
      */
-    private String representPossibleCircularRef(Object object) {
+    private RenderingBuffer representPossibleCircularRef(Object object) {
         // Let's check if we know the object
-        Integer knownReference = getKnownReferences().get(object);
-        if(knownReference != null){
+        Optional<Integer> previousReference = this.references.makeReferenceTo(object);
+        if(previousReference.isPresent()){
             // This object was already represented. We take note of the call being made
-            this.getCalledReferences().add(knownReference);
-            return ReferenceCallRenderer.INSTANCE.render(knownReference);
+            return REFERENCE_CALL_BUFFER_RENDERER.render(previousReference.get());
         }
-        // It's a new object, we create a new reference for it (starting from 1)
-        Integer newReferenceNumber = getKnownReferences().size() + 1;
-        getKnownReferences().put(object, newReferenceNumber);
-        ReferentiableObject referentiable = ReferentiableObject.create(object, newReferenceNumber);
-        return treatAsReferentiable(referentiable);
+
+        // It's a new representation
+        return createReferentiableRepresentation(object);
     }
 
     /**
-     * Creates a string representation of the given object, knowing that is not a primitive value
-     * @param referentiable The object to represent
-     * @return A string representation
+     * Creates a representation of the object with an optional reference number if the object is referenced
+     * @param object The object to represent
+     * @return The buffer with the representation
      */
-    private String treatAsReferentiable(ReferentiableObject referentiable) {
-        Object object = referentiable.getObject();
-        PartialRenderer<Object> renderer = RENDERER_PER_TYPE.getBestComplexRendererFor(object);
-        String objectRepresentation = renderer.render(object);
-        CalledReference calledReference = CalledReference.create(referentiable, objectRepresentation);
-        return CalledReferenceRenderer.INSTANCE.render(calledReference);
-    }
-
-    public Set<Integer> getCalledReferences() {
-        if (calledReferences == null) {
-            calledReferences = new HashSet<>();
-        }
-        return calledReferences;
-    }
-
-    public IdentityHashMap<Object, Integer> getKnownReferences() {
-        if (knownReferences == null) {
-            knownReferences = new IdentityHashMap<Object, Integer>();
-        }
-        return knownReferences;
+    private RenderingBuffer createReferentiableRepresentation(Object object) {
+        PartialBufferRenderer<Object> renderer = RENDERER_PER_TYPE.getBestComplexRendererFor(object);
+        RenderingBuffer objectRepresentation = renderer.render(object);
+        OptionalReferenceNumberPart optionalReference = OptionalReferenceNumberPart.create(object, this.references);
+        ListRenderingBuffer buffer = ListRenderingBuffer.create();
+        buffer.addPart(optionalReference);
+        buffer.addPart(objectRepresentation);
+        return buffer;
     }
 
     public static StringerRepresentation create(){
         StringerRepresentation representation = new StringerRepresentation();
+        representation.references = IdentityReferences.create();
         return representation;
     }
 
@@ -112,5 +87,14 @@ public class StringerRepresentation {
      * @return The buffer containing the object representation
      */
     public RenderingBuffer render(Object object) {
+        //Because primitive values can't do circular references and they don't require extra resources
+        // for conversion, we check that first case to optimize memory and processor
+        Optional<PartialBufferRenderer<Object>> primitiveRenderer = RENDERER_PER_TYPE.getBestPrimitiveRendererFor(object);
+        if(primitiveRenderer.isPresent()){
+            // It was a primitive value
+            return primitiveRenderer.get().render(object);
+        }
+        // It's a complex object
+        return representPossibleCircularRef(object);
     }
 }

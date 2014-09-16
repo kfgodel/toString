@@ -27,6 +27,16 @@ public class OptionalReferenceNumberPart implements CompositeRenderPart {
                 .orElse(Collections.emptyList());
     }
 
+    @Override
+    public int getEstimatedSize() {
+        int totalSize = 0;
+        List<Object> optionalParts = getParts();
+        for (Object optionalPart : optionalParts) {
+            totalSize += ((String)optionalPart).length();
+        }
+        return totalSize;
+    }
+
     /**
      * Creates a string representation of the reference declaration
      * @param referenceNumber The number that identifies the declaration
@@ -34,14 +44,16 @@ public class OptionalReferenceNumberPart implements CompositeRenderPart {
      */
     private List<Object> createRefNumDeclarationParts(Integer referenceNumber) {
         ArrayList<Object> parts = new ArrayList<Object>(2);
-        parts.add(referenceNumber);
+        parts.add(String.valueOf(referenceNumber));
         parts.add(Stringer.CONFIGURATION.getReferenceDeclarationSymbol());
         return parts;
     }
 
     public static OptionalReferenceNumberPart create(Object referentiable, RepresentationReferences references) {
-        OptionalReferenceNumberPart optionalReferenceNumberPart = new OptionalReferenceNumberPart();
-        return optionalReferenceNumberPart;
+        OptionalReferenceNumberPart referencePart = new OptionalReferenceNumberPart();
+        referencePart.references = references;
+        referencePart.referentiable = referentiable;
+        return referencePart;
     }
 
 }

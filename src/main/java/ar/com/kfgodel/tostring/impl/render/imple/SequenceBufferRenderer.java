@@ -1,12 +1,10 @@
 package ar.com.kfgodel.tostring.impl.render.imple;
 
 import ar.com.kfgodel.tostring.Stringer;
-import ar.com.kfgodel.tostring.impl.StringerContext;
 import ar.com.kfgodel.tostring.impl.render.RenderingBuffer;
 
 import java.util.Iterator;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 
 /**
  * This type knows how to render a sequence of elements (represented by an iterator and a size)
@@ -17,6 +15,7 @@ public class SequenceBufferRenderer {
     private String openingSequenceSymbol;
     private String closingSequenceSymbol;
     private BiConsumer<RenderingBuffer, Object> actionPerElement;
+    private boolean bodyIsOptional;
 
 
     /**
@@ -25,14 +24,13 @@ public class SequenceBufferRenderer {
      * @param sequenceSize The size of the sequence (needed because iterator doesn't have size)
      * @return  The buffer that contains the rendered parts
      */
-    public RenderingBuffer render(Iterator<?> elementIterator, int sequenceSize){
-        ListRenderingBuffer buffer = ListRenderingBuffer.create();
-        buffer.addPart(sequenceSize);
-        buffer.addPart(Stringer.CONFIGURATION.getCardinalitySymbol());
-        buffer.addPart(Stringer.CONFIGURATION.getOpeningSequenceSymbol());
+    public void render(RenderingBuffer buffer, Iterator<?> elementIterator, int sequenceSize){
+        if(bodyIsOptional && sequenceSize == 0){
+            return;
+        }
+        buffer.addPart(openingSequenceSymbol);
         renderInto(buffer, elementIterator, sequenceSize);
-        buffer.addPart(Stringer.CONFIGURATION.getClosingSequenceSymbol());
-        return buffer;
+        buffer.addPart(closingSequenceSymbol);
     }
 
 
@@ -60,15 +58,16 @@ public class SequenceBufferRenderer {
                 break;
             }
             Object object = elementIterator.next();
-            actionPerElement.accept(buffer, object);
+            this.actionPerElement.accept(buffer, object);
         }
     }
 
-    public static SequenceBufferRenderer create( String openingSequenceSymbol, String closingSequenceSymbol, BiConsumer<RenderingBuffer, ?> actionPerElement ) {
+    public static SequenceBufferRenderer create( String openingSequenceSymbol, String closingSequenceSymbol, BiConsumer<RenderingBuffer, ?> actionPerElement, boolean elementsAreOptional ) {
         SequenceBufferRenderer renderer = new SequenceBufferRenderer();
         renderer.openingSequenceSymbol = openingSequenceSymbol;
         renderer.closingSequenceSymbol = closingSequenceSymbol;
         renderer.actionPerElement = (BiConsumer<RenderingBuffer, Object>) actionPerElement;
+        renderer.bodyIsOptional = elementsAreOptional;
         return renderer;
     }
 

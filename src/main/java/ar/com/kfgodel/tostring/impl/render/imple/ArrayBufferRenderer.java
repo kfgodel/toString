@@ -21,7 +21,11 @@ public class ArrayBufferRenderer implements PartialBufferRenderer<Object> {
     @Override
     public RenderingBuffer render(Object value) {
         ArrayIterator arrayIterator = ArrayIterator.create(value);
-        return this.sequenceRenderer.render(arrayIterator, arrayIterator.size());
+        int arraySize = arrayIterator.size();
+        ListRenderingBuffer buffer = ListRenderingBuffer.create();
+        CollectionPrefixAction.INSTANCE.accept(buffer, arraySize);
+        this.sequenceRenderer.render(buffer, arrayIterator, arraySize);
+        return buffer;
     }
 
     public static ArrayBufferRenderer create() {
@@ -29,7 +33,8 @@ public class ArrayBufferRenderer implements PartialBufferRenderer<Object> {
         renderer.sequenceRenderer = SequenceBufferRenderer.create(
                 Stringer.CONFIGURATION.getOpeningSequenceSymbol(),
                 Stringer.CONFIGURATION.getClosingSequenceSymbol(),
-                RecursiveRenderIntoBuffer.INSTANCE);
+                RecursiveRenderIntoBuffer.INSTANCE,
+                false);
         return renderer;
     }
 

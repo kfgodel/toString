@@ -19,7 +19,11 @@ public class CollectionBufferRenderer implements PartialBufferRenderer<Collectio
 
     @Override
     public RenderingBuffer render(Collection collection) {
-        return this.sequenceRenderer.render(collection.iterator(), collection.size());
+        ListRenderingBuffer buffer = ListRenderingBuffer.create();
+        int collectionSize = collection.size();
+        CollectionPrefixAction.INSTANCE.accept(buffer, collectionSize);
+        this.sequenceRenderer.render(buffer, collection.iterator(), collectionSize);
+        return buffer;
     }
 
     public static CollectionBufferRenderer create() {
@@ -27,7 +31,8 @@ public class CollectionBufferRenderer implements PartialBufferRenderer<Collectio
         renderer.sequenceRenderer = SequenceBufferRenderer.create(
                 Stringer.CONFIGURATION.getOpeningSequenceSymbol(),
                 Stringer.CONFIGURATION.getClosingSequenceSymbol(),
-                RecursiveRenderIntoBuffer.INSTANCE);
+                RecursiveRenderIntoBuffer.INSTANCE,
+                false);
         return renderer;
     }
 

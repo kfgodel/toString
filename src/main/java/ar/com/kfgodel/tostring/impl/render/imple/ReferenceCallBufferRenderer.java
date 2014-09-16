@@ -16,4 +16,10 @@ public class ReferenceCallBufferRenderer implements PartialBufferRenderer<Intege
         buffer.addPart(knownReference);
         return buffer;
     }
+
+    public static ReferenceCallBufferRenderer create() {
+        ReferenceCallBufferRenderer referenceCallBufferRenderer = new ReferenceCallBufferRenderer();
+        return referenceCallBufferRenderer;
+    }
+
 }

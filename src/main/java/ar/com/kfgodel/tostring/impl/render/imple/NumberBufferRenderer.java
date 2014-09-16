@@ -14,4 +14,10 @@ public class NumberBufferRenderer implements PartialBufferRenderer<Number> {
         buffer.addPart(value);
         return buffer;
     }
+
+    public static NumberBufferRenderer create() {
+        NumberBufferRenderer numberBufferRenderer = new NumberBufferRenderer();
+        return numberBufferRenderer;
+    }
+
 }

@@ -1,7 +1,7 @@
 package ar.com.kfgodel.tostring.impl.render.imple;
 
 import ar.com.kfgodel.tostring.Stringer;
-import ar.com.kfgodel.tostring.impl.properties.ObjectRendering;
+import ar.com.kfgodel.tostring.impl.properties.ObjectField;
 import ar.com.kfgodel.tostring.impl.render.PartialBufferRenderer;
 import ar.com.kfgodel.tostring.impl.render.RenderingBuffer;
 import net.vidageek.mirror.dsl.Mirror;
@@ -11,39 +11,52 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This type knows how to render objects into buffers
  * Created by kfgodel on 15/09/14.
  */
 public class ObjectBufferRenderer implements PartialBufferRenderer<Object> {
+
+    private SequenceBufferRenderer sequenceRenderer;
+
     @Override
     public RenderingBuffer render(Object value) {
         ListRenderingBuffer buffer = ListRenderingBuffer.create();
 
         // If defined, we try its own toString
-        String customString = null;
-        Exception errorRaisedInCustomString = null;
+        Optional<String> customString = Optional.empty();
+        Optional<Exception> errorRaisedInCustomString = Optional.empty();
         try {
-            customString = getStringFromOwnDefinitionFor(value);
+            customString = useToStringDefinedIn(value);
         } catch (Exception e) {
-            errorRaisedInCustomString = e;
+            errorRaisedInCustomString = Optional.of(e);
         }
-        if(customString != null){
+        if(customString.isPresent()){
             // It has its own definition, we use that
-            buffer.addPart(customString);
+            buffer.addPart(customString.get());
         }else{
-            // It failed, or didn't have one. We use our own
+            // It failed, or it didn't have one. We use our own
             useOurDefinitionFor(value, buffer);
-            if(errorRaisedInCustomString != null){
-                // We let the user know that something went wrong with custom string
-                buffer.addPart(" instead of ");
-                buffer.addPart(errorRaisedInCustomString.getClass().getSimpleName());
-                buffer.addPart(": ");
-                buffer.addPart(errorRaisedInCustomString.getMessage());
-            }
+            errorRaisedInCustomString.ifPresent((exception) -> {
+                addErrorDescriptionTo(buffer, exception);
+            });
         }
         return buffer;
+    }
+
+    /**
+     * Adds the exception description to this object render
+     */
+    private void addErrorDescriptionTo(ListRenderingBuffer buffer, Exception exception) {
+        // We let the user know that something went wrong with custom string
+        buffer.addPart(" instead of ");
+        buffer.addPart(exception.getClass().getSimpleName());
+        buffer.addPart(": ");
+        buffer.addPart(exception.getMessage());
     }
 
     /**
@@ -51,33 +64,40 @@ public class ObjectBufferRenderer implements PartialBufferRenderer<Object> {
      * @param object The object to look for custom definition of toString()
      * @return null if the object inherits definition from object
      */
-    private String getStringFromOwnDefinitionFor(Object object) {
+    private Optional<String> useToStringDefinedIn(Object object) {
         Class<?> objectClass = object.getClass();
         Method definedToStringMethod = new Mirror().on(objectClass).reflect().method("toString").withoutArgs();
         if(definedToStringMethod.getDeclaringClass().equals(Object.class)){
             // It's the default definition. It doesn't have one
-            return null;
+            return Optional.empty();
         }
-        return object.toString();
+        return Optional.ofNullable(object.toString());
     }
 
 
     private void useOurDefinitionFor(Object object, ListRenderingBuffer buffer) {
         Class<?> objectClass = object.getClass();
-        buffer.addPart(objectClass.getSimpleName());
-        buffer.addPart(Stringer.CONFIGURATION.getOpeningIdSymbol());
         List<Field> objectFields = new ArrayList<>(new Mirror().on(objectClass).reflectAll().fields());
         filterIgnoredFields(objectFields);
         Field idField = segregateIdFieldFrom(objectFields);
+
+        addTypeAndIdPrefixTo(buffer, object, idField);
+        addFieldValuesTo(buffer, object, objectFields);
+    }
+
+    private void addFieldValuesTo(ListRenderingBuffer buffer, Object object, List<Field> fields) {
+        List<ObjectField> objectFields = fields.stream().map((field) -> ObjectField.create(object, field)).collect(Collectors.toList());
+        this.sequenceRenderer.render(buffer, objectFields.iterator(), objectFields.size());
+    }
+
+    /**
+     * Adds a prefix with the type and Id for the object
+     */
+    private void addTypeAndIdPrefixTo(ListRenderingBuffer buffer, Object object, Field idField) {
+        buffer.addPart(object.getClass().getSimpleName());
+        buffer.addPart(Stringer.CONFIGURATION.getOpeningIdSymbol());
         buffer.addPart(calculateIdValueFor(object, idField));
         buffer.addPart(Stringer.CONFIGURATION.getClosingIdSymbol());
-        if(objectFields.size() > 0){
-            // Only if it has any fields we include a body
-            buffer.addPart(Stringer.CONFIGURATION.getOpeningHashSymbol());
-            addContentTo(buffer, object, objectFields);
-            buffer.addPart(Stringer.CONFIGURATION.getClosingHashSymbol());
-        }
-
     }
 
     /**
@@ -95,7 +115,7 @@ public class ObjectBufferRenderer implements PartialBufferRenderer<Object> {
     }
 
     /**
-     * Removes the id field from teh list if present, and returns it
+     * Removes the id field from the list if present, and returns it
      */
     private Field segregateIdFieldFrom(List<Field> objectFields) {
         Iterator<Field> fieldIterator = objectFields.iterator();
@@ -126,9 +146,14 @@ public class ObjectBufferRenderer implements PartialBufferRenderer<Object> {
         return Integer.toHexString(nativeHashcode);
     }
 
-    private void addContentTo(RenderingBuffer buffer, Object object, List<Field> objectFields) {
-        ObjectRendering rendering = ObjectRendering.create(object, objectFields);
-        rendering.process(buffer);
+    public static ObjectBufferRenderer create() {
+        ObjectBufferRenderer renderer = new ObjectBufferRenderer();
+        renderer.sequenceRenderer = SequenceBufferRenderer.create(
+                Stringer.CONFIGURATION.getOpeningHashSymbol(),
+                Stringer.CONFIGURATION.getClosingHashSymbol(),
+                RecursiveRenderObjectFieldIntoBuffer.INSTANCE,
+                true);
+        return renderer;
     }
 
 }
