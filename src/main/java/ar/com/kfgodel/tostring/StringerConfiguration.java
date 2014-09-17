@@ -1,5 +1,7 @@
 package ar.com.kfgodel.tostring;
 
+import ar.com.kfgodel.tostring.impl.render.renderers.RendererPerType;
+
 import javax.print.DocFlavor;
 
 /**
@@ -99,4 +101,10 @@ public interface StringerConfiguration {
      * @return The limit in characters to use
      */
     int calculateSizeLimitFor(int elementCount);
+
+    /**
+     * Returns the renderer pertype configuration
+     * @return Renderer per type mappings object
+     */
+    RendererPerType getRendererPerType();
 }

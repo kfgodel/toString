@@ -1,6 +1,7 @@
 package ar.com.kfgodel.tostring.impl.render.renderers.recursive;
 
 import ar.com.kfgodel.tostring.Stringer;
+import ar.com.kfgodel.tostring.StringerConfiguration;
 import ar.com.kfgodel.tostring.impl.properties.ObjectField;
 import ar.com.kfgodel.tostring.impl.render.buffer.RenderingBuffer;
 
@@ -12,12 +13,19 @@ import java.util.function.BiConsumer;
  */
 public class RecursiveRenderObjectFieldIntoBuffer implements BiConsumer<RenderingBuffer, ObjectField> {
 
-    public static final RecursiveRenderObjectFieldIntoBuffer INSTANCE = new RecursiveRenderObjectFieldIntoBuffer();
+    private StringerConfiguration config;
 
     @Override
     public void accept(RenderingBuffer buffer, ObjectField objectField) {
         RecursiveRenderIntoBuffer.INSTANCE.accept(buffer, objectField.getFieldName());
-        buffer.addPart(Stringer.CONFIGURATION.getKeySeparatorSymbol());
+        buffer.addPart(config.getKeySeparatorSymbol());
         RecursiveRenderIntoBuffer.INSTANCE.accept(buffer, objectField.getFieldValue());
     }
+
+    public static RecursiveRenderObjectFieldIntoBuffer create(StringerConfiguration config) {
+        RecursiveRenderObjectFieldIntoBuffer recursiveRenderObjectFieldIntoBuffer = new RecursiveRenderObjectFieldIntoBuffer();
+        recursiveRenderObjectFieldIntoBuffer.config = config;
+        return recursiveRenderObjectFieldIntoBuffer;
+    }
+
 }

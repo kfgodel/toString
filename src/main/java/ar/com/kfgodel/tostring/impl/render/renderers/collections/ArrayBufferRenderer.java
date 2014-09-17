@@ -1,6 +1,7 @@
 package ar.com.kfgodel.tostring.impl.render.renderers.collections;
 
 import ar.com.kfgodel.tostring.Stringer;
+import ar.com.kfgodel.tostring.StringerConfiguration;
 import ar.com.kfgodel.tostring.arrays.ArrayIterator;
 import ar.com.kfgodel.tostring.impl.render.PartialBufferRenderer;
 import ar.com.kfgodel.tostring.impl.render.buffer.ListRenderingBuffer;
@@ -14,24 +15,27 @@ import ar.com.kfgodel.tostring.impl.render.renderers.recursive.RecursiveRenderIn
 public class ArrayBufferRenderer implements PartialBufferRenderer<Object> {
 
     private SequenceBufferRenderer sequenceRenderer;
+    private CollectionPrefixAction prefixAction;
 
     @Override
     public RenderingBuffer render(Object value) {
         ArrayIterator arrayIterator = ArrayIterator.create(value);
         int arraySize = arrayIterator.size();
         ListRenderingBuffer buffer = ListRenderingBuffer.create();
-        CollectionPrefixAction.INSTANCE.accept(buffer, arraySize);
+        prefixAction.accept(buffer, arraySize);
         this.sequenceRenderer.render(buffer, arrayIterator, arraySize);
         return buffer;
     }
 
-    public static ArrayBufferRenderer create() {
+    public static ArrayBufferRenderer create(StringerConfiguration config) {
         ArrayBufferRenderer renderer = new ArrayBufferRenderer();
+        renderer.prefixAction = CollectionPrefixAction.create(config);
         renderer.sequenceRenderer = SequenceBufferRenderer.create(
-                Stringer.CONFIGURATION.getOpeningSequenceSymbol(),
-                Stringer.CONFIGURATION.getClosingSequenceSymbol(),
+                config.getOpeningSequenceSymbol(),
+                config.getClosingSequenceSymbol(),
                 RecursiveRenderIntoBuffer.INSTANCE,
-                false);
+                false,
+                config);
         return renderer;
     }
 

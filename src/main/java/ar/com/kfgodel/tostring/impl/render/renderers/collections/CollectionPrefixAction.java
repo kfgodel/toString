@@ -1,6 +1,7 @@
 package ar.com.kfgodel.tostring.impl.render.renderers.collections;
 
 import ar.com.kfgodel.tostring.Stringer;
+import ar.com.kfgodel.tostring.StringerConfiguration;
 import ar.com.kfgodel.tostring.impl.render.buffer.RenderingBuffer;
 
 import java.util.function.BiConsumer;
@@ -11,12 +12,19 @@ import java.util.function.BiConsumer;
  */
 public class CollectionPrefixAction implements BiConsumer<RenderingBuffer, Integer> {
 
-    public static final CollectionPrefixAction INSTANCE = new CollectionPrefixAction();
+    private StringerConfiguration config;
 
     @Override
     public void accept(RenderingBuffer buffer, Integer collectionSize) {
         buffer.addPart(collectionSize);
-        buffer.addPart(Stringer.CONFIGURATION.getCardinalitySymbol());
+        buffer.addPart(config.getCardinalitySymbol());
     }
+
+    public static CollectionPrefixAction create(StringerConfiguration config) {
+        CollectionPrefixAction collectionPrefixAction = new CollectionPrefixAction();
+        collectionPrefixAction.config = config;
+        return collectionPrefixAction;
+    }
+
 
 }

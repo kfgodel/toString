@@ -1,5 +1,6 @@
 package ar.com.kfgodel.tostring.impl;
 
+import ar.com.kfgodel.tostring.StringerConfiguration;
 import ar.com.kfgodel.tostring.impl.references.RepresentationReferences;
 import ar.com.kfgodel.tostring.impl.references.IdentityReferences;
 import ar.com.kfgodel.tostring.impl.render.PartialBufferRenderer;
@@ -19,17 +20,8 @@ import java.util.*;
  */
 public class StringerRepresentation {
 
-    /**
-     * Mapping between object types and their corresponding renderer
-     */
-    private static final RendererPerType RENDERER_PER_TYPE = RendererPerType.create();
-
-    /**
-     * Renderer for references calls
-     */
-    private static final ReferenceCallBufferRenderer REFERENCE_CALL_BUFFER_RENDERER = ReferenceCallBufferRenderer.create();
-
     private RepresentationReferences references;
+    private StringerConfiguration config;
 
 
     /**
@@ -53,7 +45,8 @@ public class StringerRepresentation {
         Optional<Integer> previousReference = this.references.makeReferenceTo(object);
         if(previousReference.isPresent()){
             // This object was already represented. We take note of the call being made
-            return REFERENCE_CALL_BUFFER_RENDERER.render(previousReference.get());
+            PartialBufferRenderer<Integer> referenceCallRenderer = config.getRendererPerType().getReferenceCallRenderer();
+            return referenceCallRenderer.render(previousReference.get());
         }
 
         // It's a new representation
@@ -66,18 +59,19 @@ public class StringerRepresentation {
      * @return The buffer with the representation
      */
     private RenderingBuffer createReferentiableRepresentation(Object object) {
-        PartialBufferRenderer<Object> renderer = RENDERER_PER_TYPE.getBestComplexRendererFor(object);
+        PartialBufferRenderer<Object> renderer = config.getRendererPerType().getBestComplexRendererFor(object);
         RenderingBuffer objectRepresentation = renderer.render(object);
-        OptionalReferenceNumberPart optionalReference = OptionalReferenceNumberPart.create(object, this.references);
+        OptionalReferenceNumberPart optionalReference = OptionalReferenceNumberPart.create(object, this.references, this.config);
         ListRenderingBuffer buffer = ListRenderingBuffer.create();
         buffer.addPart(optionalReference);
         buffer.addPart(objectRepresentation);
         return buffer;
     }
 
-    public static StringerRepresentation create(){
+    public static StringerRepresentation create(StringerConfiguration config){
         StringerRepresentation representation = new StringerRepresentation();
         representation.references = IdentityReferences.create();
+        representation.config = config;
         return representation;
     }
 
@@ -89,7 +83,7 @@ public class StringerRepresentation {
     public RenderingBuffer render(Object object) {
         //Because primitive values can't do circular references and they don't require extra resources
         // for conversion, we check that first case to optimize memory and processor
-        Optional<PartialBufferRenderer<Object>> primitiveRenderer = RENDERER_PER_TYPE.getBestPrimitiveRendererFor(object);
+        Optional<PartialBufferRenderer<Object>> primitiveRenderer = config.getRendererPerType().getBestPrimitiveRendererFor(object);
         if(primitiveRenderer.isPresent()){
             // It was a primitive value
             return primitiveRenderer.get().render(object);

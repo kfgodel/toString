@@ -1,5 +1,7 @@
 package ar.com.kfgodel.tostring.impl.render.renderers;
 
+import ar.com.kfgodel.tostring.StringerConfiguration;
+import ar.com.kfgodel.tostring.impl.StringerRepresentation;
 import ar.com.kfgodel.tostring.impl.render.PartialBufferRenderer;
 import ar.com.kfgodel.tostring.impl.render.renderers.collections.ArrayBufferRenderer;
 import ar.com.kfgodel.tostring.impl.render.renderers.collections.CollectionBufferRenderer;
@@ -8,6 +10,7 @@ import ar.com.kfgodel.tostring.impl.render.renderers.primitives.CharBufferRender
 import ar.com.kfgodel.tostring.impl.render.renderers.primitives.CharSequenceBufferRenderer;
 import ar.com.kfgodel.tostring.impl.render.renderers.primitives.NullBufferRenderer;
 import ar.com.kfgodel.tostring.impl.render.renderers.primitives.NumberBufferRenderer;
+import ar.com.kfgodel.tostring.impl.render.renderers.references.ReferenceCallBufferRenderer;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -21,41 +24,46 @@ public class RendererPerType {
     private Map<Class<?>, PartialBufferRenderer<Object>> primitiveRenderers;
     private Map<Class<?>, PartialBufferRenderer<Object>> complexRenderers;
     private PartialBufferRenderer<Object> objectRenderer;
+    private ReferenceCallBufferRenderer referenceCallRenderer;
 
-    public static RendererPerType create() {
+    public static RendererPerType create(StringerConfiguration config) {
         RendererPerType rendererPerType = new RendererPerType();
-        rendererPerType.initializeMappings();
+        rendererPerType.initializeMappings(config);
         return rendererPerType;
     }
 
     /**
      * Defines the mapping between classes and renderers
+     * @param config
      */
-    private void initializeMappings() {
-        this.initializePrimitiveMappings();
-        this.initializeComplexMappings();
-        this.objectRenderer = ObjectBufferRenderer.create();
+    private void initializeMappings(StringerConfiguration config) {
+        this.initializePrimitiveMappings(config);
+        this.initializeComplexMappings(config);
+        this.objectRenderer = ObjectBufferRenderer.create(config);
+        this.referenceCallRenderer = ReferenceCallBufferRenderer.create(config);
     }
 
     /**
      * Defines mapping between complex types and their renderers
+     * @param config
      */
-    private void initializeComplexMappings() {
+    private void initializeComplexMappings(StringerConfiguration config) {
         this.complexRenderers = new LinkedHashMap<>();
-        this.complexRenderers.put(Array.class,(PartialBufferRenderer) ArrayBufferRenderer.create());
-        this.complexRenderers.put(Collection.class,(PartialBufferRenderer) CollectionBufferRenderer.create());
-        this.complexRenderers.put(Map.class,(PartialBufferRenderer) MapBufferRenderer.create());
+        this.complexRenderers.put(Array.class,(PartialBufferRenderer) ArrayBufferRenderer.create(config));
+        this.complexRenderers.put(Collection.class,(PartialBufferRenderer) CollectionBufferRenderer.create(config));
+        this.complexRenderers.put(Map.class,(PartialBufferRenderer) MapBufferRenderer.create(config));
     }
 
     /**
      * Defines mappings between primitive types and their renderers
+     * @param config
      */
-    private void initializePrimitiveMappings() {
+    private void initializePrimitiveMappings(StringerConfiguration config) {
         this.primitiveRenderers = new LinkedHashMap<>();
         this.primitiveRenderers.put(Void.class, (PartialBufferRenderer) NullBufferRenderer.create());
         this.primitiveRenderers.put(Number.class, (PartialBufferRenderer) NumberBufferRenderer.create());
-        this.primitiveRenderers.put(Character.class, (PartialBufferRenderer) CharBufferRenderer.create());
-        this.primitiveRenderers.put(CharSequence.class, (PartialBufferRenderer) CharSequenceBufferRenderer.create());
+        this.primitiveRenderers.put(Character.class, (PartialBufferRenderer) CharBufferRenderer.create(config));
+        this.primitiveRenderers.put(CharSequence.class, (PartialBufferRenderer) CharSequenceBufferRenderer.create(config));
     }
 
     /**
@@ -106,5 +114,12 @@ public class RendererPerType {
         }
         Optional<PartialBufferRenderer<Object>> bestRender = findBestRendererIn(this.complexRenderers, objectType);
         return bestRender.orElse(this.objectRenderer);
+    }
+
+    /**
+     * @return The renderer for reference calls
+     */
+    public PartialBufferRenderer<Integer> getReferenceCallRenderer() {
+        return referenceCallRenderer;
     }
 }

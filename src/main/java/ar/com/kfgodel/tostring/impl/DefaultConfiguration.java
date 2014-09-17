@@ -2,12 +2,15 @@ package ar.com.kfgodel.tostring.impl;
 
 import ar.com.kfgodel.tostring.Stringer;
 import ar.com.kfgodel.tostring.StringerConfiguration;
+import ar.com.kfgodel.tostring.impl.render.renderers.RendererPerType;
 
 /**
  * This type represents the values for default stringer config
  * Created by kfgodel on 11/09/14.
  */
 public class DefaultConfiguration implements StringerConfiguration {
+
+    private RendererPerType rendererPerType;
 
     @Override
     public String getStringQuotingSymbol() {
@@ -103,8 +106,14 @@ public class DefaultConfiguration implements StringerConfiguration {
         return this.getHighToleranceSize();
     }
 
+    @Override
+    public RendererPerType getRendererPerType() {
+        return rendererPerType;
+    }
+
     public static DefaultConfiguration create() {
         DefaultConfiguration defaultConfiguration = new DefaultConfiguration();
+        defaultConfiguration.rendererPerType = RendererPerType.create(defaultConfiguration);
         return defaultConfiguration;
     }
 

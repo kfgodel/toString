@@ -1,6 +1,7 @@
 package ar.com.kfgodel.tostring.impl.render.renderers.collections;
 
 import ar.com.kfgodel.tostring.Stringer;
+import ar.com.kfgodel.tostring.StringerConfiguration;
 import ar.com.kfgodel.tostring.impl.render.buffer.RenderingBuffer;
 
 import java.util.Iterator;
@@ -16,6 +17,7 @@ public class SequenceBufferRenderer {
     private String closingSequenceSymbol;
     private BiConsumer<RenderingBuffer, Object> actionPerElement;
     private boolean bodyIsOptional;
+    private StringerConfiguration config;
 
 
     /**
@@ -42,19 +44,19 @@ public class SequenceBufferRenderer {
      * @param sequenceSize The size of the sequence
      */
     private void renderInto(RenderingBuffer buffer, Iterator<?> elementIterator, int sequenceSize) {
-        int contentSizeLimit = Stringer.CONFIGURATION.calculateSizeLimitFor(sequenceSize);
+        int contentSizeLimit = config.calculateSizeLimitFor(sequenceSize);
         boolean alreadyRenderedFirst = false;
         while(elementIterator.hasNext()){
             if (alreadyRenderedFirst) {
                 // After the first element we add separators between elements
-                buffer.addPart(Stringer.CONFIGURATION.getSequenceElementSeparatorSymbol());
+                buffer.addPart(config.getSequenceElementSeparatorSymbol());
             } else {
                 alreadyRenderedFirst = true;
             }
             boolean limitReached = buffer.getEstimatedSize() >= contentSizeLimit;
             if(limitReached){
                 // We will skip the rest because space limitations
-                buffer.addPart(Stringer.CONFIGURATION.getTruncatedContentSymbol());
+                buffer.addPart(config.getTruncatedContentSymbol());
                 break;
             }
             Object object = elementIterator.next();
@@ -62,12 +64,13 @@ public class SequenceBufferRenderer {
         }
     }
 
-    public static SequenceBufferRenderer create( String openingSequenceSymbol, String closingSequenceSymbol, BiConsumer<RenderingBuffer, ?> actionPerElement, boolean elementsAreOptional ) {
+    public static SequenceBufferRenderer create( String openingSequenceSymbol, String closingSequenceSymbol, BiConsumer<RenderingBuffer, ?> actionPerElement, boolean elementsAreOptional, StringerConfiguration config ) {
         SequenceBufferRenderer renderer = new SequenceBufferRenderer();
         renderer.openingSequenceSymbol = openingSequenceSymbol;
         renderer.closingSequenceSymbol = closingSequenceSymbol;
         renderer.actionPerElement = (BiConsumer<RenderingBuffer, Object>) actionPerElement;
         renderer.bodyIsOptional = elementsAreOptional;
+        renderer.config = config;
         return renderer;
     }
 

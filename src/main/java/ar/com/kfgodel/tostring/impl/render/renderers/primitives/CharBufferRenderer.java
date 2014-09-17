@@ -1,6 +1,7 @@
 package ar.com.kfgodel.tostring.impl.render.renderers.primitives;
 
 import ar.com.kfgodel.tostring.Stringer;
+import ar.com.kfgodel.tostring.StringerConfiguration;
 import ar.com.kfgodel.tostring.impl.render.PartialBufferRenderer;
 import ar.com.kfgodel.tostring.impl.render.buffer.ListRenderingBuffer;
 import ar.com.kfgodel.tostring.impl.render.buffer.RenderingBuffer;
@@ -11,18 +12,21 @@ import ar.com.kfgodel.tostring.impl.render.buffer.RenderingBuffer;
  */
 public class CharBufferRenderer implements PartialBufferRenderer<Character> {
 
+    private StringerConfiguration config;
+
     @Override
     public RenderingBuffer render(Character value) {
         ListRenderingBuffer buffer = ListRenderingBuffer.create();
-        String quotingSymbol = Stringer.CONFIGURATION.getCharacterQuotingSymbol();
+        String quotingSymbol = config.getCharacterQuotingSymbol();
         buffer.addPart(quotingSymbol);
         buffer.addPart(value);
         buffer.addPart(quotingSymbol);
         return buffer;
     }
 
-    public static CharBufferRenderer create() {
+    public static CharBufferRenderer create(StringerConfiguration config) {
         CharBufferRenderer charBufferRenderer = new CharBufferRenderer();
+        charBufferRenderer.config = config;
         return charBufferRenderer;
     }
 

@@ -1,6 +1,7 @@
 package ar.com.kfgodel.tostring.impl.render.renderers;
 
 import ar.com.kfgodel.tostring.Stringer;
+import ar.com.kfgodel.tostring.StringerConfiguration;
 import ar.com.kfgodel.tostring.impl.properties.ObjectField;
 import ar.com.kfgodel.tostring.impl.render.PartialBufferRenderer;
 import ar.com.kfgodel.tostring.impl.render.buffer.ListRenderingBuffer;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class ObjectBufferRenderer implements PartialBufferRenderer<Object> {
 
     private SequenceBufferRenderer sequenceRenderer;
+    private StringerConfiguration config;
 
     @Override
     public RenderingBuffer render(Object value) {
@@ -97,9 +99,9 @@ public class ObjectBufferRenderer implements PartialBufferRenderer<Object> {
      */
     private void addTypeAndIdPrefixTo(ListRenderingBuffer buffer, Object object, Field idField) {
         buffer.addPart(object.getClass().getSimpleName());
-        buffer.addPart(Stringer.CONFIGURATION.getOpeningIdSymbol());
+        buffer.addPart(config.getOpeningIdSymbol());
         buffer.addPart(calculateIdValueFor(object, idField));
-        buffer.addPart(Stringer.CONFIGURATION.getClosingIdSymbol());
+        buffer.addPart(config.getClosingIdSymbol());
     }
 
     /**
@@ -148,13 +150,15 @@ public class ObjectBufferRenderer implements PartialBufferRenderer<Object> {
         return Integer.toHexString(nativeHashcode);
     }
 
-    public static ObjectBufferRenderer create() {
+    public static ObjectBufferRenderer create(StringerConfiguration config) {
         ObjectBufferRenderer renderer = new ObjectBufferRenderer();
+        renderer.config = config;
         renderer.sequenceRenderer = SequenceBufferRenderer.create(
-                Stringer.CONFIGURATION.getOpeningHashSymbol(),
-                Stringer.CONFIGURATION.getClosingHashSymbol(),
-                RecursiveRenderObjectFieldIntoBuffer.INSTANCE,
-                true);
+                config.getOpeningHashSymbol(),
+                config.getClosingHashSymbol(),
+                RecursiveRenderObjectFieldIntoBuffer.create(config),
+                true,
+                config);
         return renderer;
     }
 

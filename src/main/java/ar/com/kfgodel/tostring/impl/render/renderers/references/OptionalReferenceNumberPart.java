@@ -1,6 +1,7 @@
 package ar.com.kfgodel.tostring.impl.render.renderers.references;
 
 import ar.com.kfgodel.tostring.Stringer;
+import ar.com.kfgodel.tostring.StringerConfiguration;
 import ar.com.kfgodel.tostring.impl.references.RepresentationReferences;
 import ar.com.kfgodel.tostring.impl.render.buffer.DelayedPartitionable;
 
@@ -18,6 +19,7 @@ public class OptionalReferenceNumberPart implements DelayedPartitionable {
 
     private RepresentationReferences references;
     private Object referentiable;
+    private StringerConfiguration config;
 
     @Override
     public List<Object> getParts() {
@@ -45,14 +47,15 @@ public class OptionalReferenceNumberPart implements DelayedPartitionable {
     private List<Object> createRefNumDeclarationParts(Integer referenceNumber) {
         ArrayList<Object> parts = new ArrayList<Object>(2);
         parts.add(String.valueOf(referenceNumber));
-        parts.add(Stringer.CONFIGURATION.getReferenceDeclarationSymbol());
+        parts.add(config.getReferenceDeclarationSymbol());
         return parts;
     }
 
-    public static OptionalReferenceNumberPart create(Object referentiable, RepresentationReferences references) {
+    public static OptionalReferenceNumberPart create(Object referentiable, RepresentationReferences references, StringerConfiguration config) {
         OptionalReferenceNumberPart referencePart = new OptionalReferenceNumberPart();
         referencePart.references = references;
         referencePart.referentiable = referentiable;
+        referencePart.config = config;
         return referencePart;
     }
 

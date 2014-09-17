@@ -1,6 +1,7 @@
 package ar.com.kfgodel.tostring.impl.render.renderers.collections;
 
 import ar.com.kfgodel.tostring.Stringer;
+import ar.com.kfgodel.tostring.StringerConfiguration;
 import ar.com.kfgodel.tostring.impl.render.PartialBufferRenderer;
 import ar.com.kfgodel.tostring.impl.render.buffer.ListRenderingBuffer;
 import ar.com.kfgodel.tostring.impl.render.buffer.RenderingBuffer;
@@ -15,23 +16,26 @@ import java.util.Collection;
 public class CollectionBufferRenderer implements PartialBufferRenderer<Collection> {
 
     private SequenceBufferRenderer sequenceRenderer;
+    private CollectionPrefixAction prefixAction;
 
     @Override
     public RenderingBuffer render(Collection collection) {
         ListRenderingBuffer buffer = ListRenderingBuffer.create();
         int collectionSize = collection.size();
-        CollectionPrefixAction.INSTANCE.accept(buffer, collectionSize);
+        prefixAction.accept(buffer, collectionSize);
         this.sequenceRenderer.render(buffer, collection.iterator(), collectionSize);
         return buffer;
     }
 
-    public static CollectionBufferRenderer create() {
+    public static CollectionBufferRenderer create(StringerConfiguration config) {
         CollectionBufferRenderer renderer = new CollectionBufferRenderer();
+        renderer.prefixAction = CollectionPrefixAction.create(config);
         renderer.sequenceRenderer = SequenceBufferRenderer.create(
-                Stringer.CONFIGURATION.getOpeningSequenceSymbol(),
-                Stringer.CONFIGURATION.getClosingSequenceSymbol(),
+                config.getOpeningSequenceSymbol(),
+                config.getClosingSequenceSymbol(),
                 RecursiveRenderIntoBuffer.INSTANCE,
-                false);
+                false,
+                config);
         return renderer;
     }
 

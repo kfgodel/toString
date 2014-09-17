@@ -1,5 +1,7 @@
 package ar.com.kfgodel.tostring.impl;
 
+import ar.com.kfgodel.tostring.Stringer;
+
 import java.util.function.Function;
 
 /**
@@ -33,7 +35,7 @@ public class StringerContext {
      */
     private static <T> T executeWithNewRepresentation(Function<StringerRepresentation, T> action) {
         //There's no previous. We create and set it in context for the duration of the action
-        StringerRepresentation createdRepresentation = StringerRepresentation.create();
+        StringerRepresentation createdRepresentation = StringerRepresentation.create(Stringer.CONFIGURATION);
         THREAD_CONTEXT.set(createdRepresentation);
         try{
             return executeOn(createdRepresentation, action);
