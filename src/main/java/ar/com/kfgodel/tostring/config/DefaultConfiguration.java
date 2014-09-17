@@ -1,8 +1,4 @@
-package ar.com.kfgodel.tostring.impl;
-
-import ar.com.kfgodel.tostring.Stringer;
-import ar.com.kfgodel.tostring.StringerConfiguration;
-import ar.com.kfgodel.tostring.impl.render.renderers.RendererPerType;
+package ar.com.kfgodel.tostring.config;
 
 /**
  * This type represents the values for default stringer config

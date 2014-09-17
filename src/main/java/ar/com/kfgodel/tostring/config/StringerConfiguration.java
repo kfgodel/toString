@@ -1,8 +1,4 @@
-package ar.com.kfgodel.tostring;
-
-import ar.com.kfgodel.tostring.impl.render.renderers.RendererPerType;
-
-import javax.print.DocFlavor;
+package ar.com.kfgodel.tostring.config;
 
 /**
  * This type represents the configuration of Stringer

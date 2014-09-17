@@ -2,7 +2,7 @@ package ar.com.kfgodel.tostring.impl.render.renderers;
 
 import ar.com.kfgodel.tostring.ImplementedWithStringer;
 import ar.com.kfgodel.tostring.Stringer;
-import ar.com.kfgodel.tostring.StringerConfiguration;
+import ar.com.kfgodel.tostring.config.StringerConfiguration;
 import ar.com.kfgodel.tostring.impl.properties.ObjectField;
 import ar.com.kfgodel.tostring.impl.render.PartialBufferRenderer;
 import ar.com.kfgodel.tostring.impl.render.buffer.ListRenderingBuffer;
@@ -34,8 +34,8 @@ public class ObjectBufferRenderer implements PartialBufferRenderer<Object> {
     public RenderingBuffer render(Object value) {
         // If it has other definition of toString we try to use it
         Optional<Exception> errorRaisedInCustomString = Optional.empty();
-        boolean hasNonStringerCustomToString = getDifferentStringDefinitionFrom(value);
-        if(hasNonStringerCustomToString){
+        boolean itHasNonStringerCustomToString = getDifferentStringDefinitionFrom(value);
+        if(itHasNonStringerCustomToString){
             try {
                 return useObjectDefinitionOfToString(value);
             } catch (Exception e) {
@@ -56,7 +56,7 @@ public class ObjectBufferRenderer implements PartialBufferRenderer<Object> {
      * @return The rendered buffer
      * @throws java.lang.Exception if something failed in object toString definition
      */
-    private RenderingBuffer useObjectDefinitionOfToString(Object value) throws Exception{
+    private RenderingBuffer useObjectDefinitionOfToString(Object value){
         return SingleStringBuffer.create(value.toString());
     }
 
@@ -90,22 +90,6 @@ public class ObjectBufferRenderer implements PartialBufferRenderer<Object> {
         buffer.addPart(": ");
         buffer.addPart(exception.getMessage());
     }
-
-    /**
-     * Gets the String representation from custom defined toString() method
-     * @param object The object to look for custom definition of toString()
-     * @return null if the object inherits definition from object
-     */
-    private Optional<String> useToStringDefinedIn(Object object) {
-        Class<?> objectClass = object.getClass();
-        Method definedToStringMethod = new Mirror().on(objectClass).reflect().method("toString").withoutArgs();
-        if(definedToStringMethod.getDeclaringClass().equals(Object.class)){
-            // It's the default definition. It doesn't have one
-            return Optional.empty();
-        }
-        return Optional.ofNullable(object.toString());
-    }
-
 
     private void useOurDefinitionFor(Object object, ListRenderingBuffer buffer, Optional<Exception> errorRaisedInCustomString) {
         Class<?> objectClass = object.getClass();

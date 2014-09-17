@@ -1,14 +1,12 @@
 package ar.com.kfgodel.tostring.impl;
 
-import ar.com.kfgodel.tostring.StringerConfiguration;
+import ar.com.kfgodel.tostring.config.StringerConfiguration;
 import ar.com.kfgodel.tostring.impl.references.RepresentationReferences;
 import ar.com.kfgodel.tostring.impl.references.IdentityReferences;
 import ar.com.kfgodel.tostring.impl.render.PartialBufferRenderer;
 import ar.com.kfgodel.tostring.impl.render.buffer.RenderingBuffer;
 import ar.com.kfgodel.tostring.impl.render.buffer.ListRenderingBuffer;
 import ar.com.kfgodel.tostring.impl.render.renderers.references.OptionalReferenceNumberPart;
-import ar.com.kfgodel.tostring.impl.render.renderers.references.ReferenceCallBufferRenderer;
-import ar.com.kfgodel.tostring.impl.render.renderers.RendererPerType;
 
 import java.util.*;
 

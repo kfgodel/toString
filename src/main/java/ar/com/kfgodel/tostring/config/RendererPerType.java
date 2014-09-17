@@ -1,8 +1,7 @@
-package ar.com.kfgodel.tostring.impl.render.renderers;
+package ar.com.kfgodel.tostring.config;
 
-import ar.com.kfgodel.tostring.StringerConfiguration;
-import ar.com.kfgodel.tostring.impl.StringerRepresentation;
 import ar.com.kfgodel.tostring.impl.render.PartialBufferRenderer;
+import ar.com.kfgodel.tostring.impl.render.renderers.ObjectBufferRenderer;
 import ar.com.kfgodel.tostring.impl.render.renderers.collections.ArrayBufferRenderer;
 import ar.com.kfgodel.tostring.impl.render.renderers.collections.CollectionBufferRenderer;
 import ar.com.kfgodel.tostring.impl.render.renderers.collections.MapBufferRenderer;

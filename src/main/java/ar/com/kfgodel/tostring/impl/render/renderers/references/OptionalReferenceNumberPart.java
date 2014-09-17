@@ -1,7 +1,6 @@
 package ar.com.kfgodel.tostring.impl.render.renderers.references;
 
-import ar.com.kfgodel.tostring.Stringer;
-import ar.com.kfgodel.tostring.StringerConfiguration;
+import ar.com.kfgodel.tostring.config.StringerConfiguration;
 import ar.com.kfgodel.tostring.impl.references.RepresentationReferences;
 import ar.com.kfgodel.tostring.impl.render.buffer.DelayedPartitionable;
 

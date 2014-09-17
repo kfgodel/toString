@@ -1,8 +1,8 @@
 package ar.com.kfgodel.tostring;
 
-import ar.com.kfgodel.tostring.impl.DefaultConfiguration;
+import ar.com.kfgodel.tostring.config.StringerConfiguration;
+import ar.com.kfgodel.tostring.config.DefaultConfiguration;
 import ar.com.kfgodel.tostring.impl.StringerContext;
-import ar.com.kfgodel.tostring.impl.StringerRepresentation;
 
 /**
  * This type represents the API facade for getting a String representation of objects
