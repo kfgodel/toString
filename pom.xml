@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sf.kfgodel</groupId>
   <artifactId>toString</artifactId>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
   <name>toString</name>
   <description>A Java project that eases common toString() method implementation</description>
   
