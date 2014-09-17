@@ -2,6 +2,7 @@ package ar.com.kfgodel.tostring;
 
 import ar.com.dgarcia.javaspec.api.JavaSpec;
 import ar.com.dgarcia.javaspec.api.JavaSpecRunner;
+import ar.com.kfgodel.tostring.impl.render.buffer.SingleStringBuffer;
 import ar.com.kfgodel.tostring.testobjects.*;
 import org.junit.runner.RunWith;
 
@@ -196,11 +197,19 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
                         .isEqualTo("FaultyToStringObject«42»{\"usedInToString\": null} instead of NullPointerException: null");
             });
 
-            it("also has a reference number", ()->{
+            it("also has a referential number", ()->{
                 CustomToStringObject customStringObject = CustomToStringObject.create();
                 List<CustomToStringObject> listWithDuplicate = Arrays.asList(customStringObject, customStringObject);
                 assertThat(Stringer.representationOf(listWithDuplicate))
                         .isEqualTo("2#[1º·TaDa!, §1]");
+            });
+
+            it("can be overriden by custom renderer", ()->{
+                Stringer.CONFIGURATION.getRendererPerType().addCustomRenderer(CustomToStringObject.class, (object) -> SingleStringBuffer.create("Boom!"));
+                CustomToStringObject customStringObject = CustomToStringObject.create();
+                assertThat(Stringer.representationOf(customStringObject))
+                        .isEqualTo("Boom!");
+
             });
         });
     }

@@ -122,4 +122,11 @@ public class RendererPerType {
     public PartialBufferRenderer<Integer> getReferenceCallRenderer() {
         return referenceCallRenderer;
     }
+
+    /**
+     * Adds a custom renderer that will be applied on matching types
+     */
+    public<T> void addCustomRenderer(Class<? extends T> type, PartialBufferRenderer<? super T> renderer) {
+        this.complexRenderers.put(type, (PartialBufferRenderer<Object>) renderer);
+    }
 }
