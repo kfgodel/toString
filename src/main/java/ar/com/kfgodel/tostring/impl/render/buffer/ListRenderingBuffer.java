@@ -11,7 +11,6 @@ import java.util.List;
 public class ListRenderingBuffer implements RenderingBuffer {
 
     private List<Object> parts;
-    private Object lastPart;
 
     @Override
     public String printOnString() {
