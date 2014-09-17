@@ -1,5 +1,8 @@
 package ar.com.kfgodel.tostring.impl.references;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 
 /**

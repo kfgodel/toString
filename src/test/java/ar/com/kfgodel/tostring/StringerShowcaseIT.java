@@ -5,6 +5,8 @@ import ar.com.dgarcia.javaspec.api.JavaSpecRunner;
 import ar.com.kfgodel.tostring.impl.render.buffer.SingleStringBuffer;
 import ar.com.kfgodel.tostring.testobjects.*;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -16,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @RunWith(JavaSpecRunner.class)
 public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
+
     @Override
     public void define() {
 
@@ -210,6 +213,21 @@ public class StringerShowcaseIT extends JavaSpec<StringerTestContext> {
                 assertThat(Stringer.representationOf(customStringObject))
                         .isEqualTo("Boom!");
 
+            });
+        });
+
+        describe("toString() implemented with Stringer", ()->{
+            it("can be called as any other toString()", ()->{
+                StringerContainer container = StringerContainer.create(10);
+                assertThat(container.toString())
+                        .isEqualTo("StringerContainer«10»{\"elements\": 0#[]}");
+            });
+            it("must be annotated with @ImplementedWithStringer if called recursively", ()->{
+                StringerContainer container = StringerContainer.create(10);
+                container.add(StringerContained.create(2));
+                container.add(StringerContained.create(5));
+                assertThat(container.toString())
+                        .isEqualTo("1º·StringerContainer«10»{\"elements\": 2#[StringerContained«2»{\"container\": §1}, StringerContained«5»{\"container\": §1}]}");
             });
         });
     }

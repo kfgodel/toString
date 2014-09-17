@@ -1,17 +1,20 @@
 package ar.com.kfgodel.tostring.impl.render.renderers;
 
+import ar.com.kfgodel.tostring.ImplementedWithStringer;
 import ar.com.kfgodel.tostring.Stringer;
 import ar.com.kfgodel.tostring.StringerConfiguration;
 import ar.com.kfgodel.tostring.impl.properties.ObjectField;
 import ar.com.kfgodel.tostring.impl.render.PartialBufferRenderer;
 import ar.com.kfgodel.tostring.impl.render.buffer.ListRenderingBuffer;
 import ar.com.kfgodel.tostring.impl.render.buffer.RenderingBuffer;
+import ar.com.kfgodel.tostring.impl.render.buffer.SingleStringBuffer;
 import ar.com.kfgodel.tostring.impl.render.renderers.collections.SequenceBufferRenderer;
 import ar.com.kfgodel.tostring.impl.render.renderers.recursive.RecursiveRenderObjectFieldIntoBuffer;
 import net.vidageek.mirror.dsl.Mirror;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,27 +32,52 @@ public class ObjectBufferRenderer implements PartialBufferRenderer<Object> {
 
     @Override
     public RenderingBuffer render(Object value) {
-        ListRenderingBuffer buffer = ListRenderingBuffer.create();
-
-        // If defined, we try its own toString
-        Optional<String> customString = Optional.empty();
+        // If it has other definition of toString we try to use it
         Optional<Exception> errorRaisedInCustomString = Optional.empty();
-        try {
-            customString = useToStringDefinedIn(value);
-        } catch (Exception e) {
-            errorRaisedInCustomString = Optional.of(e);
+        boolean hasNonStringerCustomToString = getDifferentStringDefinitionFrom(value);
+        if(hasNonStringerCustomToString){
+            try {
+                return useObjectDefinitionOfToString(value);
+            } catch (Exception e) {
+                // If it fails we record the error
+                errorRaisedInCustomString = Optional.of(e);
+            }
         }
-        if(customString.isPresent()){
-            // It has its own definition, we use that
-            buffer.addPart(customString.get());
-        }else{
-            // It failed, or it didn't have one. We use our own
-            useOurDefinitionFor(value, buffer);
-            errorRaisedInCustomString.ifPresent((exception) -> {
-                addErrorDescriptionTo(buffer, exception);
-            });
-        }
+
+        // It failed, or it didn't have one. We use our own
+        ListRenderingBuffer buffer = ListRenderingBuffer.create();
+        useOurDefinitionFor(value, buffer, errorRaisedInCustomString);
         return buffer;
+    }
+
+    /**
+     * Renders the object representation using its toString definition
+     * @param value The object to render
+     * @return The rendered buffer
+     * @throws java.lang.Exception if something failed in object toString definition
+     */
+    private RenderingBuffer useObjectDefinitionOfToString(Object value) throws Exception{
+        return SingleStringBuffer.create(value.toString());
+    }
+
+    /**
+     * Extracts the toString() method defined in the object class that is not the default Object#toString() and
+     * was not implemented with Stringer.
+     * @param value The object to extract the method from
+     * @return True id the object has a definition of toString that's not from object and it's not implemented with Stringer
+     */
+    private boolean getDifferentStringDefinitionFrom(Object value) {
+        Method definedToStringMethod = new Mirror().on(value.getClass()).reflect().method("toString").withoutArgs();
+        if(definedToStringMethod.getDeclaringClass().equals(Object.class)){
+            // It's the default definition. It doesn't have one
+            return false;
+        }
+        ImplementedWithStringer annotation = definedToStringMethod.getAnnotation(ImplementedWithStringer.class);
+        if(annotation != null){
+            // It's implemented with Stringer, so we don't have to call it
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -79,14 +107,29 @@ public class ObjectBufferRenderer implements PartialBufferRenderer<Object> {
     }
 
 
-    private void useOurDefinitionFor(Object object, ListRenderingBuffer buffer) {
+    private void useOurDefinitionFor(Object object, ListRenderingBuffer buffer, Optional<Exception> errorRaisedInCustomString) {
         Class<?> objectClass = object.getClass();
-        List<Field> objectFields = new ArrayList<>(new Mirror().on(objectClass).reflectAll().fields());
-        filterIgnoredFields(objectFields);
+        List<Field> objectFields = getRenderableFieldsFrom(objectClass);
         Field idField = segregateIdFieldFrom(objectFields);
 
         addTypeAndIdPrefixTo(buffer, object, idField);
         addFieldValuesTo(buffer, object, objectFields);
+        errorRaisedInCustomString.ifPresent((exception) -> {
+            addErrorDescriptionTo(buffer, exception);
+        });
+    }
+
+    /**
+     * Returns the fields from the given class that can be rendered.<br>
+     *     Static and banned fields are ignored
+     * @param objectClass The class to inspect
+     * @return The list of renderable fields (if any)
+     */
+    private List<Field> getRenderableFieldsFrom(Class<?> objectClass) {
+        List<Field> objectFields = new ArrayList<>(new Mirror().on(objectClass).reflectAll().fields().matching((field)->
+                        !Modifier.isStatic(field.getModifiers()) && !field.getName().equals("$jacocoData")
+        ));
+        return objectFields;
     }
 
     private void addFieldValuesTo(ListRenderingBuffer buffer, Object object, List<Field> fields) {
@@ -102,20 +145,6 @@ public class ObjectBufferRenderer implements PartialBufferRenderer<Object> {
         buffer.addPart(config.getOpeningIdSymbol());
         buffer.addPart(calculateIdValueFor(object, idField));
         buffer.addPart(config.getClosingIdSymbol());
-    }
-
-    /**
-     * Removes fields that are banned from representation
-     * @param objectFields The fields to omit during representation
-     */
-    private void filterIgnoredFields(List<Field> objectFields) {
-        for (Iterator<Field> iterator = objectFields.iterator(); iterator.hasNext(); ) {
-            Field next = iterator.next();
-            if(next.getName().equals("$jacocoData")){
-                // Jacoco adds this on CI, and we don't want it
-                iterator.remove();
-            }
-        }
     }
 
     /**
