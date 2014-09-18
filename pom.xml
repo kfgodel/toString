@@ -10,9 +10,9 @@
   
   
   <scm>
-	<connection>scm:git:ssh://bitbucket.org/kfgodel/object-mapper.git</connection>
-	<developerConnection>scm:git:ssh://bitbucket.org/kfgodel/object-mapper.git</developerConnection>
-	<url>https://bitbucket.org/kfgodel/object-mapper</url>
+	<connection>scm:git:ssh://github.com/kfgodel/toString.git</connection>
+	<developerConnection>scm:git:ssh://github.com/kfgodel/toString.git</developerConnection>
+	<url>https://github.com/kfgodel/toString</url>
   </scm>
   
 
