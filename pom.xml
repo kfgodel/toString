@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -15,7 +16,7 @@
 
   <name>toString</name>
   <description>A Java project that eases common toString() method implementation</description>
-  
+
   <scm>
     <connection>scm:git:ssh://github.com/kfgodel/toString.git</connection>
     <developerConnection>scm:git:ssh://github.com/kfgodel/toString.git</developerConnection>
@@ -37,11 +38,17 @@
   <dependencies>
 
     <!-- Reflection for accessing object fields -->
-      <dependency>
-          <groupId>net.vidageek</groupId>
-          <artifactId>mirror</artifactId>
-          <version>${version.mirror}</version>
-      </dependency>
+    <dependency>
+      <groupId>net.vidageek</groupId>
+      <artifactId>mirror</artifactId>
+      <version>${version.mirror}</version>
+    </dependency>
+
+    <!-- Rspec like testing -->
+    <dependency>
+      <groupId>ar.com.dgarcia</groupId>
+      <artifactId>java-spec</artifactId>
+    </dependency>
 
   </dependencies>
 
