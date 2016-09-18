@@ -2,7 +2,7 @@ package ar.com.kfgodel.tostring;
 
 import ar.com.dgarcia.javaspec.api.JavaSpec;
 import ar.com.dgarcia.javaspec.api.JavaSpecRunner;
-import ar.com.dgarcia.javaspec.api.TestContext;
+import ar.com.dgarcia.javaspec.api.contexts.TestContext;
 import ar.com.kfgodel.tostring.arrays.ArrayIterator;
 import org.junit.runner.RunWith;
 

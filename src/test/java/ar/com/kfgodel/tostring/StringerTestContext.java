@@ -1,6 +1,7 @@
 package ar.com.kfgodel.tostring;
 
-import ar.com.dgarcia.javaspec.api.TestContext;
+
+import ar.com.dgarcia.javaspec.api.contexts.TestContext;
 
 import java.util.function.Supplier;
 
