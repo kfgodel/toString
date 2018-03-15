@@ -1,7 +1,7 @@
 package ar.com.kfgodel.v1.tostring.impl.render.renderers;
 
 import ar.com.kfgodel.v1.tostring.ImplementedWithStringer;
-import ar.com.kfgodel.v1.tostring.Stringer;
+import ar.com.kfgodel.v1.tostring.OldStringer;
 import ar.com.kfgodel.v1.tostring.config.StringerConfiguration;
 import ar.com.kfgodel.v1.tostring.impl.properties.ObjectField;
 import ar.com.kfgodel.v1.tostring.impl.render.PartialBufferRenderer;
@@ -156,7 +156,7 @@ public class ObjectBufferRenderer implements PartialBufferRenderer<Object> {
         // Let's try to get the id value, if it has one
         Object idValue = (idField == null)? null : new Mirror().on(object).get().field(idField);
         if(idValue != null){
-            return Stringer.representationOf(idValue);
+            return OldStringer.representationOf(idValue);
         }
         // It doesn't have an ID field, or it's null. We use native hashcode
         int nativeHashcode = System.identityHashCode(object);

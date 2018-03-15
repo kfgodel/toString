@@ -9,10 +9,10 @@ import java.util.function.Supplier;
  * This type defines the api for a Stringer test context to be reused in test
  * Created by kfgodel on 09/09/14.
  */
-public interface StringerTestContext extends TestContext {
+public interface OldStringerTestContext extends TestContext {
 
-    Stringer stringer();
-    void stringer(Supplier<Stringer> definition);
+    OldStringer stringer();
+    void stringer(Supplier<OldStringer> definition);
 
     Object object();
     void object(Supplier<Object> definition);

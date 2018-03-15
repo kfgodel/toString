@@ -1,7 +1,7 @@
 package ar.com.kfgodel.v1.tostring.testobjects;
 
 import ar.com.kfgodel.v1.tostring.ImplementedWithStringer;
-import ar.com.kfgodel.v1.tostring.Stringer;
+import ar.com.kfgodel.v1.tostring.OldStringer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public class StringerContainer {
     @Override
     @ImplementedWithStringer
     public String toString() {
-        return Stringer.representationOf(this);
+        return OldStringer.representationOf(this);
     }
 
     public void add(StringerContained contained) {
