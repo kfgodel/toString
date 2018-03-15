@@ -39,7 +39,16 @@ public class DynamicRepresentationStringerTest extends JavaSpec<StringerTestCont
       it("handles an exception on the supplier with a brief description",()->{
         context().supplier(() -> () -> {throw new RuntimeException("Ka-Boom!");});
 
-        assertThat(context().dynamicStringer().get()).isEqualTo("1");
+        assertThat(context().dynamicStringer().get()).isEqualTo("Exception evaluating stringer: Ka-Boom!\n" +
+          "ar.com.kfgodel.stringer.DynamicRepresentationStringerTest.lambda$null$7(DynamicRepresentationStringerTest.java:40)\n" +
+          "ar.com.kfgodel.stringer.impl.DynamicRepresentationStringer.get(DynamicRepresentationStringer.java:22)\n" +
+          "ar.com.kfgodel.stringer.DynamicRepresentationStringerTest.lambda$null$9(DynamicRepresentationStringerTest.java:42)");
+      });
+
+      it("returns 'null' if null is returned by supplier",()->{
+        context().supplier(() -> () -> null);
+
+        assertThat(context().dynamicStringer().get()).isEqualTo("null");
       });
 
     });

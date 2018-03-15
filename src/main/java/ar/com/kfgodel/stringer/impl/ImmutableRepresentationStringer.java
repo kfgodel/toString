@@ -18,8 +18,18 @@ public class ImmutableRepresentationStringer implements Stringer {
 
   public static ImmutableRepresentationStringer create(String representation) {
     ImmutableRepresentationStringer stringer = new ImmutableRepresentationStringer();
-    stringer.representation = representation;
+    stringer.representation = fixRepresentation(representation);
     return stringer;
+  }
+
+  /**
+   * Forces the given value to be a string, even if it's null.<br>
+   *   A 'null' string is used if null is passed
+   * @param representation The value to fix
+   * @return A valid string representation
+   */
+  public static String fixRepresentation(String representation){
+    return representation == null ? "null" : representation;
   }
 
 }

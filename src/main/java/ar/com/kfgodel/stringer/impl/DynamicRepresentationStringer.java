@@ -19,7 +19,8 @@ public class DynamicRepresentationStringer implements Stringer {
   @Override
   public String get() {
     try {
-      return representationSupplier.get();
+      String representation = representationSupplier.get();
+      return ImmutableRepresentationStringer.fixRepresentation(representation);
     } catch (Exception e) {
       String stackPreview = Arrays.stream(e.getStackTrace())
         .limit(MAX_STACK_PREVIEW_SIZE)

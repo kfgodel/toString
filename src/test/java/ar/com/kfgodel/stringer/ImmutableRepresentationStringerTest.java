@@ -23,6 +23,11 @@ public class ImmutableRepresentationStringerTest extends JavaSpec<StringerTestCo
         context().representation(() -> representation);
         assertThat(context().immutableStringer().get()).isSameAs(representation);
       });
+
+      it("returns 'null' if null is used to create it", () -> {
+        ImmutableRepresentationStringer stringer = ImmutableRepresentationStringer.create(null);
+        assertThat(stringer.get()).isEqualTo("null");
+      });
     });
 
   }
