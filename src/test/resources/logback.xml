@@ -16,7 +16,7 @@
 		</encoder>
 	</appender>
   
-	<logger name="ar.com.kfgodel.tostring" level="DEBUG" />
+	<logger name="ar.com.kfgodel.v1.tostring" level="DEBUG" />
 	
 	<root level="info">
 	  <appender-ref ref="STDOUT" />
