@@ -25,7 +25,7 @@ public class RendererPerType {
     private PartialBufferRenderer<Object> objectRenderer;
     private ReferenceCallBufferRenderer referenceCallRenderer;
 
-    public static RendererPerType create(StringerConfiguration config) {
+    public static RendererPerType create(OldStringerConfiguration config) {
         RendererPerType rendererPerType = new RendererPerType();
         rendererPerType.initializeMappings(config);
         return rendererPerType;
@@ -35,7 +35,7 @@ public class RendererPerType {
      * Defines the mapping between classes and renderers
      * @param config
      */
-    private void initializeMappings(StringerConfiguration config) {
+    private void initializeMappings(OldStringerConfiguration config) {
         this.initializePrimitiveMappings(config);
         this.initializeComplexMappings(config);
         this.objectRenderer = ObjectBufferRenderer.create(config);
@@ -46,7 +46,7 @@ public class RendererPerType {
      * Defines mapping between complex types and their renderers
      * @param config
      */
-    private void initializeComplexMappings(StringerConfiguration config) {
+    private void initializeComplexMappings(OldStringerConfiguration config) {
         this.complexRenderers = new LinkedHashMap<>();
         this.complexRenderers.put(Array.class,(PartialBufferRenderer) ArrayBufferRenderer.create(config));
         this.complexRenderers.put(Collection.class,(PartialBufferRenderer) CollectionBufferRenderer.create(config));
@@ -57,7 +57,7 @@ public class RendererPerType {
      * Defines mappings between primitive types and their renderers
      * @param config
      */
-    private void initializePrimitiveMappings(StringerConfiguration config) {
+    private void initializePrimitiveMappings(OldStringerConfiguration config) {
         this.primitiveRenderers = new LinkedHashMap<>();
         this.primitiveRenderers.put(Void.class, (PartialBufferRenderer) NullBufferRenderer.create());
         this.primitiveRenderers.put(Number.class, (PartialBufferRenderer) NumberBufferRenderer.create());

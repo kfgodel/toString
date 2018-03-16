@@ -1,6 +1,6 @@
 package ar.com.kfgodel.v1.tostring.impl.render.renderers.collections;
 
-import ar.com.kfgodel.v1.tostring.config.StringerConfiguration;
+import ar.com.kfgodel.v1.tostring.config.OldStringerConfiguration;
 import ar.com.kfgodel.v1.tostring.impl.render.buffer.RenderingBuffer;
 
 import java.util.Iterator;
@@ -16,7 +16,7 @@ public class SequenceBufferRenderer {
     private String closingSequenceSymbol;
     private BiConsumer<RenderingBuffer, Object> actionPerElement;
     private boolean bodyIsOptional;
-    private StringerConfiguration config;
+    private OldStringerConfiguration config;
 
 
     /**
@@ -63,7 +63,7 @@ public class SequenceBufferRenderer {
         }
     }
 
-    public static SequenceBufferRenderer create( String openingSequenceSymbol, String closingSequenceSymbol, BiConsumer<RenderingBuffer, ?> actionPerElement, boolean elementsAreOptional, StringerConfiguration config ) {
+    public static SequenceBufferRenderer create( String openingSequenceSymbol, String closingSequenceSymbol, BiConsumer<RenderingBuffer, ?> actionPerElement, boolean elementsAreOptional, OldStringerConfiguration config ) {
         SequenceBufferRenderer renderer = new SequenceBufferRenderer();
         renderer.openingSequenceSymbol = openingSequenceSymbol;
         renderer.closingSequenceSymbol = closingSequenceSymbol;

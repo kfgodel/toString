@@ -1,7 +1,7 @@
 package ar.com.kfgodel.v1.tostring;
 
-import ar.com.kfgodel.v1.tostring.config.DefaultConfiguration;
-import ar.com.kfgodel.v1.tostring.config.StringerConfiguration;
+import ar.com.kfgodel.v1.tostring.config.DefaultConfigurationOld;
+import ar.com.kfgodel.v1.tostring.config.OldStringerConfiguration;
 import ar.com.kfgodel.v1.tostring.impl.StringerContext;
 
 /**
@@ -13,7 +13,7 @@ public interface OldStringer {
     /**
      * The global configuration used when doing the representations
      */
-    public static StringerConfiguration CONFIGURATION = DefaultConfiguration.create();
+    public static OldStringerConfiguration CONFIGURATION = DefaultConfigurationOld.create();
 
     /**
      * Creates a String representation of given object.<br>

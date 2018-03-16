@@ -2,7 +2,7 @@ package ar.com.kfgodel.v1.tostring.impl.render.renderers;
 
 import ar.com.kfgodel.v1.tostring.ImplementedWithStringer;
 import ar.com.kfgodel.v1.tostring.OldStringer;
-import ar.com.kfgodel.v1.tostring.config.StringerConfiguration;
+import ar.com.kfgodel.v1.tostring.config.OldStringerConfiguration;
 import ar.com.kfgodel.v1.tostring.impl.properties.ObjectField;
 import ar.com.kfgodel.v1.tostring.impl.render.PartialBufferRenderer;
 import ar.com.kfgodel.v1.tostring.impl.render.buffer.ListRenderingBuffer;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class ObjectBufferRenderer implements PartialBufferRenderer<Object> {
 
     private SequenceBufferRenderer sequenceRenderer;
-    private StringerConfiguration config;
+    private OldStringerConfiguration config;
 
     @Override
     public RenderingBuffer render(Object value) {
@@ -163,7 +163,7 @@ public class ObjectBufferRenderer implements PartialBufferRenderer<Object> {
         return Integer.toHexString(nativeHashcode);
     }
 
-    public static ObjectBufferRenderer create(StringerConfiguration config) {
+    public static ObjectBufferRenderer create(OldStringerConfiguration config) {
         ObjectBufferRenderer renderer = new ObjectBufferRenderer();
         renderer.config = config;
         renderer.sequenceRenderer = SequenceBufferRenderer.create(

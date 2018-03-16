@@ -1,7 +1,7 @@
 package ar.com.kfgodel.v1.tostring.impl.render.renderers.collections;
 
 import ar.com.kfgodel.v1.tostring.arrays.ArrayIterator;
-import ar.com.kfgodel.v1.tostring.config.StringerConfiguration;
+import ar.com.kfgodel.v1.tostring.config.OldStringerConfiguration;
 import ar.com.kfgodel.v1.tostring.impl.render.PartialBufferRenderer;
 import ar.com.kfgodel.v1.tostring.impl.render.buffer.ListRenderingBuffer;
 import ar.com.kfgodel.v1.tostring.impl.render.buffer.RenderingBuffer;
@@ -26,7 +26,7 @@ public class ArrayBufferRenderer implements PartialBufferRenderer<Object> {
         return buffer;
     }
 
-    public static ArrayBufferRenderer create(StringerConfiguration config) {
+    public static ArrayBufferRenderer create(OldStringerConfiguration config) {
         ArrayBufferRenderer renderer = new ArrayBufferRenderer();
         renderer.prefixAction = CollectionPrefixAction.create(config);
         renderer.sequenceRenderer = SequenceBufferRenderer.create(

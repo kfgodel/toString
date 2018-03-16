@@ -1,6 +1,6 @@
 package ar.com.kfgodel.v1.tostring.impl;
 
-import ar.com.kfgodel.v1.tostring.config.StringerConfiguration;
+import ar.com.kfgodel.v1.tostring.config.OldStringerConfiguration;
 import ar.com.kfgodel.v1.tostring.impl.references.IdentityReferences;
 import ar.com.kfgodel.v1.tostring.impl.references.RepresentationReferences;
 import ar.com.kfgodel.v1.tostring.impl.render.PartialBufferRenderer;
@@ -19,7 +19,7 @@ import java.util.Optional;
 public class StringerRepresentation {
 
     private RepresentationReferences references;
-    private StringerConfiguration config;
+    private OldStringerConfiguration config;
 
 
     /**
@@ -66,7 +66,7 @@ public class StringerRepresentation {
         return buffer;
     }
 
-    public static StringerRepresentation create(StringerConfiguration config){
+    public static StringerRepresentation create(OldStringerConfiguration config){
         StringerRepresentation representation = new StringerRepresentation();
         representation.references = IdentityReferences.create();
         representation.config = config;

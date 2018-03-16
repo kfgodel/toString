@@ -1,6 +1,6 @@
 package ar.com.kfgodel.v1.tostring.impl.render.renderers.collections;
 
-import ar.com.kfgodel.v1.tostring.config.StringerConfiguration;
+import ar.com.kfgodel.v1.tostring.config.OldStringerConfiguration;
 import ar.com.kfgodel.v1.tostring.impl.render.PartialBufferRenderer;
 import ar.com.kfgodel.v1.tostring.impl.render.buffer.ListRenderingBuffer;
 import ar.com.kfgodel.v1.tostring.impl.render.buffer.RenderingBuffer;
@@ -26,7 +26,7 @@ public class MapBufferRenderer implements PartialBufferRenderer<Map<Object, Obje
         return buffer;
     }
 
-    public static MapBufferRenderer create(StringerConfiguration config) {
+    public static MapBufferRenderer create(OldStringerConfiguration config) {
         MapBufferRenderer renderer = new MapBufferRenderer();
         renderer.prefixAction = CollectionPrefixAction.create(config);
         renderer.sequenceRenderer = SequenceBufferRenderer.create(

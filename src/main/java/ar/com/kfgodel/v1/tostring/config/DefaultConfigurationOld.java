@@ -4,7 +4,7 @@ package ar.com.kfgodel.v1.tostring.config;
  * This type represents the values for default stringer config
  * Created by kfgodel on 11/09/14.
  */
-public class DefaultConfiguration implements StringerConfiguration {
+public class DefaultConfigurationOld implements OldStringerConfiguration {
 
     private RendererPerType rendererPerType;
 
@@ -107,8 +107,8 @@ public class DefaultConfiguration implements StringerConfiguration {
         return rendererPerType;
     }
 
-    public static DefaultConfiguration create() {
-        DefaultConfiguration defaultConfiguration = new DefaultConfiguration();
+    public static DefaultConfigurationOld create() {
+        DefaultConfigurationOld defaultConfiguration = new DefaultConfigurationOld();
         defaultConfiguration.rendererPerType = RendererPerType.create(defaultConfiguration);
         return defaultConfiguration;
     }

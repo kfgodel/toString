@@ -4,7 +4,7 @@ package ar.com.kfgodel.v1.tostring.config;
  * This type represents the configuration of Stringer
  * Created by kfgodel on 11/09/14.
  */
-public interface StringerConfiguration {
+public interface OldStringerConfiguration {
     /**
      * @return The symbol used to quote strings in the representations
      */

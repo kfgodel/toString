@@ -1,6 +1,6 @@
 package ar.com.kfgodel.v1.tostring.impl.render.renderers.recursive;
 
-import ar.com.kfgodel.v1.tostring.config.StringerConfiguration;
+import ar.com.kfgodel.v1.tostring.config.OldStringerConfiguration;
 import ar.com.kfgodel.v1.tostring.impl.render.buffer.RenderingBuffer;
 
 import java.util.Map;
@@ -12,7 +12,7 @@ import java.util.function.BiConsumer;
  */
 public class RecursiveRenderKeyAndValueIntoBuffer implements BiConsumer<RenderingBuffer, Map.Entry<?,?>> {
 
-    private StringerConfiguration config;
+    private OldStringerConfiguration config;
 
     @Override
     public void accept(RenderingBuffer buffer, Map.Entry<?,?> entry) {
@@ -21,7 +21,7 @@ public class RecursiveRenderKeyAndValueIntoBuffer implements BiConsumer<Renderin
         RecursiveRenderIntoBuffer.INSTANCE.accept(buffer, entry.getValue());
     }
 
-    public static RecursiveRenderKeyAndValueIntoBuffer create(StringerConfiguration config) {
+    public static RecursiveRenderKeyAndValueIntoBuffer create(OldStringerConfiguration config) {
         RecursiveRenderKeyAndValueIntoBuffer renderKeyAndValueIntoBuffer = new RecursiveRenderKeyAndValueIntoBuffer();
         renderKeyAndValueIntoBuffer.config = config;
         return renderKeyAndValueIntoBuffer;

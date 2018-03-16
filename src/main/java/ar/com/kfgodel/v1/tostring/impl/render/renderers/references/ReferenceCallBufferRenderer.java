@@ -1,6 +1,6 @@
 package ar.com.kfgodel.v1.tostring.impl.render.renderers.references;
 
-import ar.com.kfgodel.v1.tostring.config.StringerConfiguration;
+import ar.com.kfgodel.v1.tostring.config.OldStringerConfiguration;
 import ar.com.kfgodel.v1.tostring.impl.render.PartialBufferRenderer;
 import ar.com.kfgodel.v1.tostring.impl.render.buffer.ListRenderingBuffer;
 import ar.com.kfgodel.v1.tostring.impl.render.buffer.RenderingBuffer;
@@ -10,7 +10,7 @@ import ar.com.kfgodel.v1.tostring.impl.render.buffer.RenderingBuffer;
  * Created by kfgodel on 15/09/14.
  */
 public class ReferenceCallBufferRenderer implements PartialBufferRenderer<Integer> {
-    private StringerConfiguration config;
+    private OldStringerConfiguration config;
 
     @Override
     public RenderingBuffer render(Integer knownReference) {
@@ -20,7 +20,7 @@ public class ReferenceCallBufferRenderer implements PartialBufferRenderer<Intege
         return buffer;
     }
 
-    public static ReferenceCallBufferRenderer create(StringerConfiguration config) {
+    public static ReferenceCallBufferRenderer create(OldStringerConfiguration config) {
         ReferenceCallBufferRenderer referenceCallBufferRenderer = new ReferenceCallBufferRenderer();
         referenceCallBufferRenderer.config = config;
         return referenceCallBufferRenderer;

@@ -1,6 +1,6 @@
 package ar.com.kfgodel.v1.tostring.impl.render.renderers.collections;
 
-import ar.com.kfgodel.v1.tostring.config.StringerConfiguration;
+import ar.com.kfgodel.v1.tostring.config.OldStringerConfiguration;
 import ar.com.kfgodel.v1.tostring.impl.render.PartialBufferRenderer;
 import ar.com.kfgodel.v1.tostring.impl.render.buffer.ListRenderingBuffer;
 import ar.com.kfgodel.v1.tostring.impl.render.buffer.RenderingBuffer;
@@ -26,7 +26,7 @@ public class CollectionBufferRenderer implements PartialBufferRenderer<Collectio
         return buffer;
     }
 
-    public static CollectionBufferRenderer create(StringerConfiguration config) {
+    public static CollectionBufferRenderer create(OldStringerConfiguration config) {
         CollectionBufferRenderer renderer = new CollectionBufferRenderer();
         renderer.prefixAction = CollectionPrefixAction.create(config);
         renderer.sequenceRenderer = SequenceBufferRenderer.create(
