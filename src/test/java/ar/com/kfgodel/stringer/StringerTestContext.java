@@ -3,6 +3,7 @@ package ar.com.kfgodel.stringer;
 import ar.com.dgarcia.javaspec.api.contexts.TestContext;
 import ar.com.kfgodel.stringer.impl.DynamicRepresentationStringer;
 import ar.com.kfgodel.stringer.impl.ImmutableRepresentationStringer;
+import ar.com.kfgodel.stringer.impl.LazyRepresentationStringer;
 
 import java.util.function.Supplier;
 
@@ -25,5 +26,8 @@ public interface StringerTestContext extends TestContext {
 
   Supplier<String> supplier();
   void supplier(Supplier<Supplier<String>> definition);
+
+  LazyRepresentationStringer lazyStringer();
+  void lazyStringer(Supplier<LazyRepresentationStringer> definition);
 
 }

@@ -21,7 +21,7 @@ public class DynamicRepresentationStringerTest extends JavaSpec<StringerTestCont
     describe("a dynamic representation stringer", () -> {
       context().dynamicStringer(() -> DynamicRepresentationStringer.create(context().supplier()));
 
-      it("evaluates the given supplier to get the representation", () -> {
+      it("gets the representation from the supplier", () -> {
         String representation = "Hello World";
         context().supplier(() -> () -> representation);
         assertThat(context().dynamicStringer().get()).isSameAs(representation);
