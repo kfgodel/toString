@@ -1,6 +1,7 @@
 package ar.com.kfgodel.stringer;
 
 import ar.com.dgarcia.javaspec.api.contexts.TestContext;
+import ar.com.kfgodel.stringer.api.config.StringerConfiguration;
 import ar.com.kfgodel.stringer.impl.DynamicRepresentationStringer;
 import ar.com.kfgodel.stringer.impl.ImmutableRepresentationStringer;
 import ar.com.kfgodel.stringer.impl.LazyRepresentationStringer;
@@ -29,5 +30,8 @@ public interface StringerTestContext extends TestContext {
 
   LazyRepresentationStringer lazyStringer();
   void lazyStringer(Supplier<LazyRepresentationStringer> definition);
+
+  StringerConfiguration configuration();
+  void configuration(Supplier<StringerConfiguration> definition);
 
 }

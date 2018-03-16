@@ -1,6 +1,8 @@
 package ar.com.kfgodel.stringer.impl;
 
 import ar.com.kfgodel.stringer.api.Stringer;
+import ar.com.kfgodel.stringer.api.config.StringerConfiguration;
+import ar.com.kfgodel.stringer.impl.config.DefaultStringerConfiguration;
 
 /**
  * This class implements the stringer for a value that stays the same during the whole application lifetime.<br>
@@ -10,15 +12,25 @@ import ar.com.kfgodel.stringer.api.Stringer;
  */
 public class ImmutableRepresentationStringer implements Stringer {
   private String representation;
+  private StringerConfiguration config;
 
   @Override
   public String get() {
     return representation;
   }
 
+  /**
+   * Creates an instance configured with a default configuration
+   */
   public static ImmutableRepresentationStringer create(String representation) {
+    return create(representation, DefaultStringerConfiguration.create());
+  }
+
+
+  public static ImmutableRepresentationStringer create(String representation, StringerConfiguration config) {
     ImmutableRepresentationStringer stringer = new ImmutableRepresentationStringer();
-    stringer.representation = fixRepresentation(representation);
+    stringer.representation = config.ensureNonNullRepresentation(representation);
+    stringer.config = config;
     return stringer;
   }
 

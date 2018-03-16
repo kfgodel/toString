@@ -3,6 +3,7 @@ package ar.com.kfgodel.stringer;
 import ar.com.dgarcia.javaspec.api.JavaSpec;
 import ar.com.dgarcia.javaspec.api.JavaSpecRunner;
 import ar.com.kfgodel.stringer.impl.ImmutableRepresentationStringer;
+import ar.com.kfgodel.stringer.impl.config.DefaultStringerConfiguration;
 import org.junit.runner.RunWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,6 +29,18 @@ public class ImmutableRepresentationStringerTest extends JavaSpec<StringerTestCo
         ImmutableRepresentationStringer stringer = ImmutableRepresentationStringer.create(null);
         assertThat(stringer.get()).isEqualTo("null");
       });
+
+      describe("when a custom config is used", () -> {
+        context().configuration(()-> DefaultStringerConfiguration.create()
+          .usingForNullValues(()-> "a null value")
+        );
+        it("uses the config ", () -> {
+          ImmutableRepresentationStringer stringer = ImmutableRepresentationStringer.create(null, context().configuration());
+          assertThat(stringer.get()).isEqualTo("a null value");
+        });
+
+      });
+
     });
 
   }
