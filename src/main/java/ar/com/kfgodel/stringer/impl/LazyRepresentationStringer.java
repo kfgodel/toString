@@ -1,6 +1,8 @@
 package ar.com.kfgodel.stringer.impl;
 
 import ar.com.kfgodel.stringer.api.Stringer;
+import ar.com.kfgodel.stringer.api.config.StringerConfiguration;
+import ar.com.kfgodel.stringer.impl.config.DefaultStringerConfiguration;
 
 import java.util.function.Supplier;
 
@@ -22,9 +24,17 @@ public class LazyRepresentationStringer implements Stringer {
     return representation;
   }
 
+  /**
+   * Creates an instance with the default configuration
+   */
   public static LazyRepresentationStringer create(Supplier<String> representationSupplier) {
+    return create(representationSupplier, DefaultStringerConfiguration.create());
+  }
+
+
+  public static LazyRepresentationStringer create(Supplier<String> representationSupplier, StringerConfiguration configuration) {
     LazyRepresentationStringer stringer = new LazyRepresentationStringer();
-    stringer.representationSupplier = DynamicRepresentationStringer.create(representationSupplier);
+    stringer.representationSupplier = DynamicRepresentationStringer.create(representationSupplier, configuration);
     stringer.representation = null;
     return stringer;
   }
