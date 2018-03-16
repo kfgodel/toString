@@ -20,4 +20,17 @@ public interface StringerConfiguration {
    * @return The same instance if not null, a null representing string otherwise
    */
   String ensureNonNullRepresentation(String representation);
+
+  /**
+   * Defines the number of stacktrace lines to include in error details when a representation fails to execute
+   *  (a stringer that dependes on a supplier)
+   * @param exceptionStackLevelsCount The number of stack levels to include
+   * @return This instance
+   */
+  StringerConfiguration limitingFailedRepresentationStackTo(int exceptionStackLevelsCount);
+
+  /**
+   * The numebr of stack levels to include in representation when something fails to render the string
+   */
+  int getExceptionStackLimit();
 }

@@ -34,7 +34,7 @@ public class ImmutableRepresentationStringerTest extends JavaSpec<StringerTestCo
         context().configuration(()-> DefaultStringerConfiguration.create()
           .usingForNullValues(()-> "a null value")
         );
-        it("uses the config ", () -> {
+        it("allows for a custom null representation", () -> {
           ImmutableRepresentationStringer stringer = ImmutableRepresentationStringer.create(null, context().configuration());
           assertThat(stringer.get()).isEqualTo("a null value");
         });

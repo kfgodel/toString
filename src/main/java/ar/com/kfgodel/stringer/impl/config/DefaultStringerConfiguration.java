@@ -10,12 +10,15 @@ import java.util.function.Supplier;
  */
 public class DefaultStringerConfiguration implements StringerConfiguration {
 
+  public static final int DEFAULT_STACK_LEVEL_COUNT = 3;
 
   private Supplier<String> nullRepresentationSupplier;
+  private int exceptionStackLevelCount;
 
   public static DefaultStringerConfiguration create() {
     DefaultStringerConfiguration configuration = new DefaultStringerConfiguration();
     configuration.nullRepresentationSupplier = configuration::changeNullValue;
+    configuration.exceptionStackLevelCount = DEFAULT_STACK_LEVEL_COUNT;
     return configuration;
   }
 
@@ -35,5 +38,16 @@ public class DefaultStringerConfiguration implements StringerConfiguration {
       return nullRepresentationSupplier.get();
     }
     return representation;
+  }
+
+  @Override
+  public StringerConfiguration limitingFailedRepresentationStackTo(int exceptionStackLevelsCount) {
+    this.exceptionStackLevelCount = exceptionStackLevelsCount;
+    return this;
+  }
+
+  @Override
+  public int getExceptionStackLimit() {
+    return this.exceptionStackLevelCount;
   }
 }

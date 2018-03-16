@@ -3,6 +3,7 @@ package ar.com.kfgodel.stringer;
 import ar.com.dgarcia.javaspec.api.JavaSpec;
 import ar.com.dgarcia.javaspec.api.JavaSpecRunner;
 import ar.com.kfgodel.stringer.impl.DynamicRepresentationStringer;
+import ar.com.kfgodel.stringer.impl.config.DefaultStringerConfiguration;
 import org.junit.runner.RunWith;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -40,15 +41,36 @@ public class DynamicRepresentationStringerTest extends JavaSpec<StringerTestCont
         context().supplier(() -> () -> {throw new RuntimeException("Ka-Boom!");});
 
         assertThat(context().dynamicStringer().get()).isEqualTo("Exception evaluating stringer: Ka-Boom!\n" +
-          "ar.com.kfgodel.stringer.DynamicRepresentationStringerTest.lambda$null$7(DynamicRepresentationStringerTest.java:40)\n" +
-          "ar.com.kfgodel.stringer.impl.DynamicRepresentationStringer.get(DynamicRepresentationStringer.java:22)\n" +
-          "ar.com.kfgodel.stringer.DynamicRepresentationStringerTest.lambda$null$9(DynamicRepresentationStringerTest.java:42)");
+          "ar.com.kfgodel.stringer.DynamicRepresentationStringerTest.lambda$null$7(DynamicRepresentationStringerTest.java:41)\n" +
+          "ar.com.kfgodel.stringer.impl.DynamicRepresentationStringer.get(DynamicRepresentationStringer.java:25)\n" +
+          "ar.com.kfgodel.stringer.DynamicRepresentationStringerTest.lambda$null$9(DynamicRepresentationStringerTest.java:43)");
       });
 
       it("returns 'null' if null is returned by supplier",()->{
         context().supplier(() -> () -> null);
 
         assertThat(context().dynamicStringer().get()).isEqualTo("null");
+      });
+
+      describe("when a custom config is used", () -> {
+        context().configuration(()-> DefaultStringerConfiguration.create()
+          .usingForNullValues(()-> "a null value")
+          .limitingFailedRepresentationStackTo(0)
+        );
+        context().dynamicStringer(() -> DynamicRepresentationStringer.create(context().supplier(), context().configuration()));
+
+        it("allows for a deeper or shorter stacktrace",()->{
+          context().supplier(() -> () -> {throw new RuntimeException("Ka-Boom!");});
+
+          assertThat(context().dynamicStringer().get()).isEqualTo("Exception evaluating stringer: Ka-Boom!\n");
+        });
+
+        it("allows for a custom null representation",()->{
+          context().supplier(() -> () -> null);
+
+          assertThat(context().dynamicStringer().get()).isEqualTo("a null value");
+        });
+
       });
 
     });
