@@ -27,7 +27,7 @@ public class CompositeRepresentationStringerTest extends JavaSpec<StringerTestCo
           context().compositeStringer().addPart(ImmutableRepresentationStringer.create("Part1"));
         });
 
-        it("uses the stringer part as return", () -> {
+        it("uses the stringer part as result", () -> {
           assertThat(context().compositeStringer().get()).isEqualTo("Part1");
         });
 
@@ -36,7 +36,7 @@ public class CompositeRepresentationStringerTest extends JavaSpec<StringerTestCo
             context().compositeStringer().addPart(ImmutableRepresentationStringer.create("Part2"));
           });
 
-          it("concatenates each part after the previous", () -> {
+          it("concatenates each part result after the previous", () -> {
             assertThat(context().compositeStringer().get()).isEqualTo("Part1Part2");
           });
 

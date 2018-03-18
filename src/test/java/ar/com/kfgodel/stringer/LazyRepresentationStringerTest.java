@@ -39,10 +39,10 @@ public class LazyRepresentationStringerTest extends JavaSpec<StringerTestContext
       it("handles an exception on the supplier with a brief description",()->{
         context().supplier(() -> () -> {throw new RuntimeException("Ka-Boom!");});
 
-        assertThat(context().lazyStringer().get()).isEqualTo("Exception evaluating stringer: Ka-Boom!\n" +
-          "ar.com.kfgodel.stringer.LazyRepresentationStringerTest.lambda$null$7(LazyRepresentationStringerTest.java:40)\n" +
-          "ar.com.kfgodel.stringer.impl.DynamicRepresentationStringer.get(DynamicRepresentationStringer.java:25)\n" +
-          "ar.com.kfgodel.stringer.impl.LazyRepresentationStringer.get(LazyRepresentationStringer.java:21)");
+        assertThat(context().lazyStringer().get())
+          .startsWith("Exception evaluating stringer: Ka-Boom!")
+          .contains("ar.com.kfgodel.stringer.LazyRepresentationStringerTest")
+          .matches("(.+\\n){3}.+");// 4 lineas separadas por \n
       });
 
       it("returns 'null' if null is returned by supplier",()->{
