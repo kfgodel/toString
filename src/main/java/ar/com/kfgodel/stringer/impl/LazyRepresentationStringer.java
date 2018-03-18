@@ -12,16 +12,11 @@ import java.util.function.Supplier;
  */
 public class LazyRepresentationStringer implements Stringer {
 
-  private DynamicRepresentationStringer representationSupplier;
-  private String representation;
+  private Stringer delegate;
 
   @Override
   public String get() {
-    if(representation == null){
-      this.representation = representationSupplier.get();
-      this.representationSupplier = null; // Release reference if not needed
-    }
-    return representation;
+    return delegate.get();
   }
 
   /**
@@ -34,9 +29,34 @@ public class LazyRepresentationStringer implements Stringer {
 
   public static LazyRepresentationStringer create(Supplier<String> representationSupplier, StringerConfiguration configuration) {
     LazyRepresentationStringer stringer = new LazyRepresentationStringer();
-    stringer.representationSupplier = DynamicRepresentationStringer.create(representationSupplier, configuration);
-    stringer.representation = null;
+    stringer.initialize(DynamicRepresentationStringer.create(representationSupplier, configuration));
     return stringer;
+  }
+
+  private void initialize(Stringer initialStringer) {
+    // We use a self replacing instance so we can remove any overhead required for the lazy part (after the first call)
+    this.delegate = new SelfReplacingStringer(initialStringer);
+  }
+
+  /**
+   * This instance is first used and replaces itself as lazy delegate to use an immutable instance
+   * once the representation is defined by the dynamic
+   */
+  private class SelfReplacingStringer implements Stringer {
+
+    private final Stringer stringer;
+
+    public SelfReplacingStringer(Stringer initialStringer) {
+      this.stringer = initialStringer;
+    }
+
+    @Override
+    public String get() {
+      String firstRepresentation = stringer.get();
+      delegate = ImmutableRepresentationStringer.create(firstRepresentation);
+      return firstRepresentation;
+    }
+
   }
 
 }
