@@ -1,18 +1,22 @@
 package ar.com.kfgodel.stringer.samples;
 
-import ar.com.kfgodel.stringer.api.Stringer;
-
 /**
  * This class represents a simple object with primitive properties
  * Date: 17/03/18 - 22:16
  */
-public class SimpleObject {
+public class ExamplePojo {
 
   private Long id;
+  public static final String id_FIELD = "id";
+
   private String name;
+  public static final String name_FIELD = "name";
+
   private String telephone;
+  public static final String telephone_FIELD = "telephone";
+
   private int age;
-  private Stringer stringer;
+  public static final String age_FIELD = "age";
 
   public Long getId() {
     return id;
@@ -44,6 +48,15 @@ public class SimpleObject {
 
   public void setAge(int age) {
     this.age = age;
+  }
+
+  public static ExamplePojo createDefault() {
+    ExamplePojo pojo = new ExamplePojo();
+    pojo.age = 24;
+    pojo.id = 1L;
+    pojo.name = "Pepe";
+    pojo.telephone = "4544-464";
+    return pojo;
   }
 
 }

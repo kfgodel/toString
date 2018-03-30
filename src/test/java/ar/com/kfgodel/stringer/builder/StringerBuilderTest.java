@@ -6,6 +6,7 @@ import ar.com.kfgodel.stringer.StringerTestContext;
 import ar.com.kfgodel.stringer.api.Stringer;
 import ar.com.kfgodel.stringer.impl.EmptyRepresentationStringer;
 import ar.com.kfgodel.stringer.impl.builder.MutableBuilder;
+import ar.com.kfgodel.stringer.samples.ExamplePojo;
 import org.junit.runner.RunWith;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -80,6 +81,20 @@ public class StringerBuilderTest extends JavaSpec<StringerTestContext> {
           assertThat(stringer.get()).isEqualTo("representation N°2");
         });
       });
+
+      describe("when manually representing an object state", () -> {
+        context().pojo(ExamplePojo::createDefault);
+        
+        it("allows builder",()->{
+            
+        });   
+        
+        context().builder()
+          .with(ExamplePojo.class.getSimpleName())
+          .with("{")
+          .build();
+      });
+
 
     });
 
