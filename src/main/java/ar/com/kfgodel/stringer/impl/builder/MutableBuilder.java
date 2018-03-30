@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * Date: 30/03/18 - 13:42
@@ -59,10 +58,8 @@ public class MutableBuilder implements StringerBuilder {
 
   @Override
   public StringerBuilder with(Object... immutableValues) {
-    String concatenatedValue = Arrays.stream(immutableValues)
-      .map(configuration::convertToString)
-      .collect(Collectors.joining());
-    this.with(concatenatedValue);
+    Arrays.stream(immutableValues)
+      .forEach(this::with);
     return this;
   }
 
@@ -75,11 +72,8 @@ public class MutableBuilder implements StringerBuilder {
 
   @Override
   public StringerBuilder with(Supplier<?>... dynamicValues) {
-    Supplier<String> dynamicContatenation = ()-> Arrays.stream(dynamicValues)
-      .map(Supplier::get)
-      .map(configuration::convertToString)
-      .collect(Collectors.joining());
-    this.with(dynamicContatenation);
+    Arrays.stream(dynamicValues)
+      .forEach(this::with);
     return this;
   }
 
