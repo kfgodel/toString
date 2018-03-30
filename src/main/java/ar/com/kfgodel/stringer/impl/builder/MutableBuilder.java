@@ -100,4 +100,16 @@ public class MutableBuilder implements StringerBuilder {
     this.with(suffix);
     return this;
   }
+
+  @Override
+  public StringerBuilder enclosingAsState(Consumer<StringerBuilder> definition) {
+    enclosingIn(this.configuration.getStatePrefix(), this.configuration.getStateSuffix(), definition);
+    return this;
+  }
+
+  @Override
+  public StringerBuilder representing(Object representable) {
+    return null;
+  }
+
 }

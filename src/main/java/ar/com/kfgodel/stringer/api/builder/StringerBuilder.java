@@ -75,4 +75,22 @@ public interface StringerBuilder {
    * @return This instance
    */
   StringerBuilder enclosingIn(String prefix, String suffix, Consumer<StringerBuilder> definition);
+
+  /**
+   * Defines a piece of representation to be enclosed as represented object state.<br>
+   *   The state delimiters are used for the given block.<br>
+   *     Exmaple: "{ ...block content... }"
+   * @param definition The block to execute as state definition
+   * @return This instance
+   */
+  StringerBuilder enclosingAsState(Consumer<StringerBuilder> definition);
+
+  /**
+   * Configures this builder to represent the given object as a class name and several properties using the object fields
+   * as its state.<br>
+   *   Example: "CustomClass{field1: value1, field2: value2}"
+   * @param representable The object to represent
+   * @return This instance
+   */
+  StringerBuilder representing(Object representable);
 }

@@ -14,12 +14,16 @@ public class DefaultStringerConfiguration implements StringerConfiguration {
   public static final int DEFAULT_STACK_LEVEL_COUNT = 3;
   public static final String DEFAULT_PROPERTY_TO_VALUE_SEPARATOR = ": ";
   private static final String DEFAULT_PROPERTY_SEPARATOR = ", ";
+  private static final String DEFAULT_STATE_PREFIX = "{";
+  private static final String DEFAULT_STATE_SUFFIX = "}";
 
   private Function<Object, String> stringConversion;
   private Supplier<String> nullRepresentationSupplier;
   private int exceptionStackLevelCount;
   private String propertyToValueSeparator;
   private String propertySeparator;
+  private String statePrefix;
+  private String stateSuffix;
 
   public static DefaultStringerConfiguration create() {
     DefaultStringerConfiguration configuration = new DefaultStringerConfiguration();
@@ -28,6 +32,8 @@ public class DefaultStringerConfiguration implements StringerConfiguration {
     configuration.stringConversion = String::valueOf;
     configuration.propertyToValueSeparator = DEFAULT_PROPERTY_TO_VALUE_SEPARATOR;
     configuration.propertySeparator = DEFAULT_PROPERTY_SEPARATOR;
+    configuration.statePrefix = DEFAULT_STATE_PREFIX;
+    configuration.stateSuffix = DEFAULT_STATE_SUFFIX;
     return configuration;
   }
 
@@ -91,5 +97,27 @@ public class DefaultStringerConfiguration implements StringerConfiguration {
   @Override
   public String getPropertySeparator() {
     return propertySeparator;
+  }
+
+  @Override
+  public StringerConfiguration usingAsStatePrefix(String prefix) {
+    this.statePrefix = prefix;
+    return this;
+  }
+
+  @Override
+  public String getStatePrefix() {
+    return statePrefix;
+  }
+
+  @Override
+  public StringerConfiguration usingAsStateSuffix(String suffix) {
+    this.stateSuffix = suffix;
+    return this;
+  }
+
+  @Override
+  public String getStateSuffix() {
+    return stateSuffix;
   }
 }

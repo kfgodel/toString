@@ -76,4 +76,30 @@ public interface StringerConfiguration {
    * @return The separator
    */
   String getPropertySeparator();
+
+  /**
+   * Defines the prefix to use when representing an object state
+   * @param prefix The prefix part to use at the beggining of state
+   * @return this instance
+   */
+  StringerConfiguration usingAsStatePrefix(String prefix);
+
+  /**
+   * The character or string used to delimit the start of the state representation for an object
+   * @return The starting delimiter
+   */
+  String getStatePrefix();
+
+  /**
+   * Defines the suffix to use when representing an object state
+   * @param suffix The suffix to add at the end of state
+   * @return This instance
+   */
+  StringerConfiguration usingAsStateSuffix(String suffix);
+
+  /**
+   * The character or string used to delimit the end of the state representation for an object
+   * @return The endinf delimiter
+   */
+  String getStateSuffix();
 }
