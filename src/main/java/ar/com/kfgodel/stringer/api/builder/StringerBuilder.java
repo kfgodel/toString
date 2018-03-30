@@ -2,6 +2,7 @@ package ar.com.kfgodel.stringer.api.builder;
 
 import ar.com.kfgodel.stringer.api.Stringer;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -48,10 +49,30 @@ public interface StringerBuilder {
 
   /**
    * Adds two parts to this builder as a property. Where the value can change over time.<br>
-   *   The property name to value separator string is used to separate name from value
+   *   The property name to value separator string is used to separate name from value.<br>
+   *     Example: "propertyName: propertyValue"
    * @param propertyName The name of the property
    * @param propertyValue The value
    * @return This instance
    */
   StringerBuilder withProperty(String propertyName, Supplier<?> propertyValue);
+
+  /**
+   * Adds another property to this builder, concatenating with previous content using a property separator as prefix.<br>
+   *   Example: ", propertyName: propertyValue"
+   * @param propertyName The name of the property
+   * @param propertyValue The suppliert to get the value everytime
+   * @return
+   */
+  StringerBuilder andProperty(String propertyName, Supplier<?> propertyValue);
+
+  /**
+   * Defines a prefix and suffix strings to a block of builder definition, so everything in that
+   * block is represented inside graphic delimiters
+   * @param prefix The string to use as starting delimiter
+   * @param suffix The string to use as ending delimiter
+   * @param definition The block to configure this builder content inside the delimiters
+   * @return This instance
+   */
+  StringerBuilder enclosingIn(String prefix, String suffix, Consumer<StringerBuilder> definition);
 }

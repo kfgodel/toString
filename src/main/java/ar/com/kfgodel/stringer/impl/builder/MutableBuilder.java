@@ -12,6 +12,7 @@ import ar.com.kfgodel.stringer.impl.config.DefaultStringerConfiguration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -85,4 +86,18 @@ public class MutableBuilder implements StringerBuilder {
     return this;
   }
 
+  @Override
+  public StringerBuilder andProperty(String propertyName, Supplier<?> propertyValue) {
+    this.with(configuration.getPropertySeparator());
+    this.withProperty(propertyName, propertyValue);
+    return this;
+  }
+
+  @Override
+  public StringerBuilder enclosingIn(String prefix, String suffix, Consumer<StringerBuilder> definition) {
+    this.with(prefix);
+    definition.accept(this);
+    this.with(suffix);
+    return this;
+  }
 }

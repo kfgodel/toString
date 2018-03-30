@@ -51,8 +51,29 @@ public interface StringerConfiguration {
   String convertToString(Object value);
 
   /**
+   * Defines the property name to value separator string
+   * @param nameToValueSeparator The string to use when separating the name and the value of a property
+   * @return This instance
+   */
+  StringerConfiguration usingAsPropertyNameToValueSeparator(String nameToValueSeparator);
+
+  /**
    * The character or string that is used to separate a property name from its value
    * @return The separator
    */
   String getPropertyNameToValueSeparator();
+
+
+  /**
+   * Defines the separator to use when representing different properties together
+   * @param propertySeparator The string to delimit properties
+   * @return This instance
+   */
+  StringerConfiguration usingAsPropertySeparator(String propertySeparator);
+
+  /**
+   * The character or string used to separate different properties
+   * @return The separator
+   */
+  String getPropertySeparator();
 }

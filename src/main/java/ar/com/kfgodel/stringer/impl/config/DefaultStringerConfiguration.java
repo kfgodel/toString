@@ -13,11 +13,13 @@ public class DefaultStringerConfiguration implements StringerConfiguration {
 
   public static final int DEFAULT_STACK_LEVEL_COUNT = 3;
   public static final String DEFAULT_PROPERTY_TO_VALUE_SEPARATOR = ": ";
+  private static final String DEFAULT_PROPERTY_SEPARATOR = ", ";
 
   private Function<Object, String> stringConversion;
   private Supplier<String> nullRepresentationSupplier;
   private int exceptionStackLevelCount;
   private String propertyToValueSeparator;
+  private String propertySeparator;
 
   public static DefaultStringerConfiguration create() {
     DefaultStringerConfiguration configuration = new DefaultStringerConfiguration();
@@ -25,6 +27,7 @@ public class DefaultStringerConfiguration implements StringerConfiguration {
     configuration.exceptionStackLevelCount = DEFAULT_STACK_LEVEL_COUNT;
     configuration.stringConversion = String::valueOf;
     configuration.propertyToValueSeparator = DEFAULT_PROPERTY_TO_VALUE_SEPARATOR;
+    configuration.propertySeparator = DEFAULT_PROPERTY_SEPARATOR;
     return configuration;
   }
 
@@ -69,7 +72,24 @@ public class DefaultStringerConfiguration implements StringerConfiguration {
   }
 
   @Override
+  public StringerConfiguration usingAsPropertyNameToValueSeparator(String nameToValueSeparator) {
+    this.propertyToValueSeparator = nameToValueSeparator;
+    return this;
+  }
+
+  @Override
   public String getPropertyNameToValueSeparator() {
     return propertyToValueSeparator;
+  }
+
+  @Override
+  public StringerConfiguration usingAsPropertySeparator(String propertySeparator) {
+    this.propertySeparator = propertySeparator;
+    return this;
+  }
+
+  @Override
+  public String getPropertySeparator() {
+    return propertySeparator;
   }
 }

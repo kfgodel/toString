@@ -45,12 +45,12 @@ public class ExamplePojoRepresentationTest extends JavaSpec<StringerTestContext>
       describe("using properties to build the representation", () -> {
         context().stringer(() -> MutableBuilder.createDefault()
           .with(context().pojo().getClass().getSimpleName())
-          .with("{")
-          .withProperty(ExamplePojo.id_FIELD, context().pojo()::getId).with(", ")
-          .withProperty(ExamplePojo.name_FIELD, context().pojo()::getName).with(", ")
-          .withProperty(ExamplePojo.age_FIELD, context().pojo()::getAge).with(", ")
-          .withProperty(ExamplePojo.telephone_FIELD, context().pojo()::getTelephone)
-          .with("}")
+          .enclosingIn("{","}", (builder)->
+            builder.withProperty(ExamplePojo.id_FIELD, context().pojo()::getId)
+              .andProperty(ExamplePojo.name_FIELD, context().pojo()::getName)
+              .andProperty(ExamplePojo.age_FIELD, context().pojo()::getAge)
+              .andProperty(ExamplePojo.telephone_FIELD, context().pojo()::getTelephone)
+          )
           .build()
         );
 
