@@ -8,6 +8,8 @@ import ar.com.kfgodel.stringer.impl.DynamicRepresentationStringer;
 import ar.com.kfgodel.stringer.impl.EmptyRepresentationStringer;
 import ar.com.kfgodel.stringer.impl.ImmutableRepresentationStringer;
 import ar.com.kfgodel.stringer.impl.config.DefaultStringerConfiguration;
+import ar.com.kfgodel.stringer.impl.reflection.ObjectField;
+import ar.com.kfgodel.stringer.impl.reflection.ObjectFieldExtractor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -109,7 +111,15 @@ public class MutableBuilder implements StringerBuilder {
 
   @Override
   public StringerBuilder representing(Object representable) {
-    return null;
+    this.with(representable.getClass().getSimpleName());
+    this.enclosingAsState((builder)-> {
+      List<ObjectField> properties = ObjectFieldExtractor.create(representable).extractFields();
+      properties.stream().limit(1)
+        .forEach((firstProperty) -> builder.withProperty(firstProperty.getName(), firstProperty::getValue));
+      properties.stream().skip(1)
+        .forEach((otherProperty) -> builder.andProperty(otherProperty.getName(), otherProperty::getValue));
+    });
+    return this;
   }
 
 }

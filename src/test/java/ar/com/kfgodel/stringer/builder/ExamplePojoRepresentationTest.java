@@ -19,20 +19,20 @@ public class ExamplePojoRepresentationTest extends JavaSpec<StringerTestContext>
     describe("a simple pojo represented with stringer", () -> {
       context().pojo(ExamplePojo::createDefault);
 
-      xdescribe("when automatic representation is used", () -> {
+      describe("when automatic representation is used", () -> {
         context().stringer(() -> MutableBuilder.createDefault()
           .representing(context().pojo())
           .build()
         );
 
         it("allows creating a fully custom representation", () -> {
-          assertThat(context().stringer().get()).isEqualTo("ExamplePojo{id: 1, name: Pepe, age: 24, telephone: 4544-464}");
+          assertThat(context().stringer().get()).isEqualTo("ExamplePojo{age: 24, id: 1, name: Pepe, telephone: 4544-464}");
         });
 
         it("allows the representation to change according to pojo state", () -> {
           context().pojo().setAge(34);
           context().pojo().setTelephone("123-456");
-          assertThat(context().stringer().get()).isEqualTo("ExamplePojo{id: 1, name: Pepe, age: 34, telephone: 123-456}");
+          assertThat(context().stringer().get()).isEqualTo("ExamplePojo{age: 34, id: 1, name: Pepe, telephone: 123-456}");
         });
       });
 
