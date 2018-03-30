@@ -2,6 +2,7 @@ package ar.com.kfgodel.stringer.impl.config;
 
 import ar.com.kfgodel.stringer.api.config.StringerConfiguration;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -12,6 +13,7 @@ public class DefaultStringerConfiguration implements StringerConfiguration {
 
   public static final int DEFAULT_STACK_LEVEL_COUNT = 3;
 
+  private Function<Object, String> stringConversion;
   private Supplier<String> nullRepresentationSupplier;
   private int exceptionStackLevelCount;
 
@@ -19,6 +21,7 @@ public class DefaultStringerConfiguration implements StringerConfiguration {
     DefaultStringerConfiguration configuration = new DefaultStringerConfiguration();
     configuration.nullRepresentationSupplier = configuration::changeNullValue;
     configuration.exceptionStackLevelCount = DEFAULT_STACK_LEVEL_COUNT;
+    configuration.stringConversion = String::valueOf;
     return configuration;
   }
 
@@ -29,6 +32,12 @@ public class DefaultStringerConfiguration implements StringerConfiguration {
   @Override
   public StringerConfiguration usingForNullValues(Supplier<String> nullRepresentationSupplier) {
     this.nullRepresentationSupplier = nullRepresentationSupplier;
+    return this;
+  }
+
+  @Override
+  public StringerConfiguration usingForStringConversion(Function<Object, String> stringConversion) {
+    this.stringConversion = stringConversion;
     return this;
   }
 
@@ -49,5 +58,10 @@ public class DefaultStringerConfiguration implements StringerConfiguration {
   @Override
   public int getExceptionStackLimit() {
     return this.exceptionStackLevelCount;
+  }
+
+  @Override
+  public String convertToString(Object value) {
+    return stringConversion.apply(value);
   }
 }

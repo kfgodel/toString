@@ -1,8 +1,6 @@
 package ar.com.kfgodel.stringer.samples;
 
 import ar.com.kfgodel.stringer.api.Stringer;
-import ar.com.kfgodel.stringer.api.builder.StringerBuilder;
-import ar.com.kfgodel.stringer.impl.builder.StartingBuilder;
 
 /**
  * This class represents a simple object with primitive properties
@@ -15,11 +13,6 @@ public class SimpleObject {
   private String telephone;
   private int age;
   private Stringer stringer;
-
-  public SimpleObject() {
-    StringerBuilder builder = StartingBuilder.create();
-    this.stringer = builder.build();
-  }
 
   public Long getId() {
     return id;
@@ -53,8 +46,4 @@ public class SimpleObject {
     this.age = age;
   }
 
-  @Override
-  public String toString() {
-    return stringer.get();
-  }
 }

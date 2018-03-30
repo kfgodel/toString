@@ -1,11 +1,10 @@
 package ar.com.kfgodel.stringer;
 
 import ar.com.dgarcia.javaspec.api.contexts.TestContext;
+import ar.com.kfgodel.stringer.api.Stringer;
+import ar.com.kfgodel.stringer.api.builder.StringerBuilder;
 import ar.com.kfgodel.stringer.api.config.StringerConfiguration;
-import ar.com.kfgodel.stringer.impl.CompositeRepresentationStringer;
-import ar.com.kfgodel.stringer.impl.DynamicRepresentationStringer;
-import ar.com.kfgodel.stringer.impl.ImmutableRepresentationStringer;
-import ar.com.kfgodel.stringer.impl.LazyRepresentationStringer;
+import ar.com.kfgodel.stringer.impl.*;
 
 import java.util.function.Supplier;
 
@@ -16,9 +15,6 @@ import java.util.function.Supplier;
 public interface StringerTestContext extends TestContext {
   ImmutableRepresentationStringer immutableStringer();
   void immutableStringer(Supplier<ImmutableRepresentationStringer> definition);
-
-  Object value();
-  void value(Supplier<Object> definition);
 
   String representation();
   void representation(Supplier<String> definition);
@@ -37,5 +33,14 @@ public interface StringerTestContext extends TestContext {
 
   CompositeRepresentationStringer compositeStringer();
   void compositeStringer(Supplier<CompositeRepresentationStringer> definition);
+
+  StringerBuilder builder();
+  void builder(Supplier<StringerBuilder> definition);
+
+  EmptyRepresentationStringer emptyStringer();
+  void emptyStringer(Supplier<EmptyRepresentationStringer> definition);
+
+  Stringer stringer();
+  void stringer(Supplier<Stringer> definition);
 
 }
