@@ -42,6 +42,30 @@ public class ExamplePojoRepresentationTest extends JavaSpec<StringerTestContext>
         });
       });
 
+      describe("using properties to build the representation", () -> {
+        context().stringer(() -> MutableBuilder.createDefault()
+          .with(context().pojo().getClass().getSimpleName())
+          .with("{")
+          .withProperty(ExamplePojo.id_FIELD, context().pojo()::getId).with(", ")
+          .withProperty(ExamplePojo.name_FIELD, context().pojo()::getName).with(", ")
+          .withProperty(ExamplePojo.age_FIELD, context().pojo()::getAge).with(", ")
+          .withProperty(ExamplePojo.telephone_FIELD, context().pojo()::getTelephone)
+          .with("}")
+          .build()
+        );
+
+        it("allows creating a fully custom representation", () -> {
+          assertThat(context().stringer().get()).isEqualTo("ExamplePojo{id: 1, name: Pepe, age: 24, telephone: 4544-464}");
+        });
+
+        it("allows the representation to change according to pojo state", () -> {
+          context().pojo().setAge(34);
+          context().pojo().setTelephone("123-456");
+          assertThat(context().stringer().get()).isEqualTo("ExamplePojo{id: 1, name: Pepe, age: 34, telephone: 123-456}");
+        });
+      });
+
+
     });
 
   }

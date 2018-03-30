@@ -46,4 +46,12 @@ public interface StringerBuilder {
    */
   StringerBuilder with(Supplier<?>... dynamicValues);
 
+  /**
+   * Adds two parts to this builder as a property. Where the value can change over time.<br>
+   *   The property name to value separator string is used to separate name from value
+   * @param propertyName The name of the property
+   * @param propertyValue The value
+   * @return This instance
+   */
+  StringerBuilder withProperty(String propertyName, Supplier<?> propertyValue);
 }

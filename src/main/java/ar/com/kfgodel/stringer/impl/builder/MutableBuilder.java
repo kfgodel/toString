@@ -77,4 +77,12 @@ public class MutableBuilder implements StringerBuilder {
     return this;
   }
 
+  @Override
+  public StringerBuilder withProperty(String propertyName, Supplier<?> propertyValue) {
+    this.with(propertyName);
+    this.with(this.configuration.getPropertyNameToValueSeparator());
+    this.with(propertyValue);
+    return this;
+  }
+
 }

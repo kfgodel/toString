@@ -49,4 +49,10 @@ public interface StringerConfiguration {
    * @return A non-null string representing the value
    */
   String convertToString(Object value);
+
+  /**
+   * The character or string that is used to separate a property name from its value
+   * @return The separator
+   */
+  String getPropertyNameToValueSeparator();
 }
