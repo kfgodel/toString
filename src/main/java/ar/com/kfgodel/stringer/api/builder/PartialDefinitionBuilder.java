@@ -9,7 +9,7 @@ public interface PartialDefinitionBuilder extends StringerBuilder {
    * Modifies the last dynamic value so it's cached the first time and never evaluated again
    * @return The builder to keep adding definitions
    */
-  StringerBuilder cached();
+  StringerBuilder cacheable();
 
   /**
    * Uses default behavior for las dynamic value

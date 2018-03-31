@@ -85,7 +85,7 @@ public class StringerBuilderTest extends JavaSpec<StringerTestContext> {
 
           Stringer stringer = context().builder()
             .with("representation N°")
-            .with(() -> String.valueOf(number.getAndIncrement())).cached()
+            .with(() -> String.valueOf(number.getAndIncrement())).cacheable()
             .build();
           assertThat(stringer.get()).isEqualTo("representation N°1");
           assertThat(stringer.get()).isEqualTo("representation N°1");

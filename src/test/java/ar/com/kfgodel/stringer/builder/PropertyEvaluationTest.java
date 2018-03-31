@@ -40,7 +40,7 @@ public class PropertyEvaluationTest extends JavaSpec<StringerTestContext> {
 
         describe("when caching the propery", () -> {
           context().stringer(() ->
-            context().builder().withProperty(ExamplePojo.age_FIELD, context().pojo()::getAge).cached()
+            context().builder().withProperty(ExamplePojo.age_FIELD, context().pojo()::getAge).cacheable()
               .build()
           );
 

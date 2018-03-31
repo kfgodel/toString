@@ -24,7 +24,7 @@ public class PartOnHoldBuilder implements PartialDefinitionBuilder {
   }
 
   @Override
-  public StringerBuilder cached() {
+  public StringerBuilder cacheable() {
     addAsLazyPart();
     return originalBuilder;
   }
