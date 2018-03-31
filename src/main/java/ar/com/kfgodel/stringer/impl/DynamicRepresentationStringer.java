@@ -14,16 +14,16 @@ import java.util.stream.Collectors;
  * Date: 15/03/18 - 20:11
  */
 public class DynamicRepresentationStringer implements Stringer {
-  public static final int MAX_STACK_PREVIEW_SIZE = 3;
 
-  private Supplier<String> representationSupplier;
+  private Supplier<?> valueSupplier;
   private StringerConfiguration config;
 
   @Override
   public String get() {
     try {
-      String representation = representationSupplier.get();
-      return config.ensureNonNullRepresentation(representation);
+      Object value = valueSupplier.get();
+      String representation = config.convertToString(value);
+      return representation;
     } catch (Exception e) {
       String stackPreview = Arrays.stream(e.getStackTrace())
         .limit(config.getExceptionStackLimit())
@@ -36,13 +36,13 @@ public class DynamicRepresentationStringer implements Stringer {
   /**
    * Creates an instance with a default configuration
    */
-  public static DynamicRepresentationStringer create(Supplier<String> representationSupplier) {
-    return DynamicRepresentationStringer.create(representationSupplier, DefaultStringerConfiguration.create());
+  public static DynamicRepresentationStringer create(Supplier<?> valueSupplier) {
+    return DynamicRepresentationStringer.create(valueSupplier, DefaultStringerConfiguration.create());
   }
 
-  public static DynamicRepresentationStringer create(Supplier<String> representationSupplier, StringerConfiguration configuration) {
+  public static DynamicRepresentationStringer create(Supplier<?> valueSupplier, StringerConfiguration configuration) {
     DynamicRepresentationStringer stringer = new DynamicRepresentationStringer();
-    stringer.representationSupplier = representationSupplier;
+    stringer.valueSupplier = valueSupplier;
     stringer.config = configuration;
     return stringer;
   }

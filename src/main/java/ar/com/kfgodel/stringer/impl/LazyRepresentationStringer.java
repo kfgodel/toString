@@ -22,14 +22,14 @@ public class LazyRepresentationStringer implements Stringer {
   /**
    * Creates an instance with the default configuration
    */
-  public static LazyRepresentationStringer create(Supplier<String> representationSupplier) {
-    return create(representationSupplier, DefaultStringerConfiguration.create());
+  public static LazyRepresentationStringer create(Supplier<?> valueSupplier) {
+    return create(valueSupplier, DefaultStringerConfiguration.create());
   }
 
 
-  public static LazyRepresentationStringer create(Supplier<String> representationSupplier, StringerConfiguration configuration) {
+  public static LazyRepresentationStringer create(Supplier<?> valueSupplier, StringerConfiguration configuration) {
     LazyRepresentationStringer stringer = new LazyRepresentationStringer();
-    stringer.initialize(DynamicRepresentationStringer.create(representationSupplier, configuration));
+    stringer.initialize(DynamicRepresentationStringer.create(valueSupplier, configuration));
     return stringer;
   }
 

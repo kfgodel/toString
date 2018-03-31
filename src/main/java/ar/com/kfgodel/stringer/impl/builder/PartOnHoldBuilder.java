@@ -4,6 +4,8 @@ import ar.com.kfgodel.stringer.api.Stringer;
 import ar.com.kfgodel.stringer.api.builder.PartialDefinitionBuilder;
 import ar.com.kfgodel.stringer.api.builder.StringerBuilder;
 import ar.com.kfgodel.stringer.api.config.StringerConfiguration;
+import ar.com.kfgodel.stringer.impl.DynamicRepresentationStringer;
+import ar.com.kfgodel.stringer.impl.LazyRepresentationStringer;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -36,10 +38,10 @@ public class PartOnHoldBuilder implements PartialDefinitionBuilder {
   }
 
   private void addAsLazyPart() {
-    this.originalBuilder.addPart(LazyPart.create(dynamicValue, originalBuilder.getConfiguration()));
+    this.originalBuilder.addPart(LazyRepresentationStringer.create(dynamicValue, originalBuilder.getConfiguration()));
   }
   private void addAsDynamicPart() {
-    this.originalBuilder.addPart(DynamicPart.create(dynamicValue, originalBuilder.getConfiguration()));
+    this.originalBuilder.addPart(DynamicRepresentationStringer.create(dynamicValue, originalBuilder.getConfiguration()));
   }
 
   @Override

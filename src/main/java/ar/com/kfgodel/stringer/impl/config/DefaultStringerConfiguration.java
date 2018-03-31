@@ -27,9 +27,9 @@ public class DefaultStringerConfiguration implements StringerConfiguration {
 
   public static DefaultStringerConfiguration create() {
     DefaultStringerConfiguration configuration = new DefaultStringerConfiguration();
-    configuration.nullRepresentationSupplier = configuration::changeNullValue;
+    configuration.nullRepresentationSupplier = configuration::defaultNullRepresentation;
     configuration.exceptionStackLevelCount = DEFAULT_STACK_LEVEL_COUNT;
-    configuration.stringConversion = String::valueOf;
+    configuration.stringConversion = configuration::defaultStringConversion;
     configuration.propertyToValueSeparator = DEFAULT_PROPERTY_TO_VALUE_SEPARATOR;
     configuration.propertySeparator = DEFAULT_PROPERTY_SEPARATOR;
     configuration.statePrefix = DEFAULT_STATE_PREFIX;
@@ -37,7 +37,15 @@ public class DefaultStringerConfiguration implements StringerConfiguration {
     return configuration;
   }
 
-  private String changeNullValue() {
+  private String defaultStringConversion(Object value) {
+    if(value == null){
+      return nullRepresentationSupplier.get();
+    }
+    String representation = String.valueOf(value);
+    return ensureNonNullRepresentation(representation);
+  }
+
+  private String defaultNullRepresentation() {
     return "null";
   }
 

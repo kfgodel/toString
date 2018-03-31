@@ -22,26 +22,16 @@ public class ImmutableRepresentationStringer implements Stringer {
   /**
    * Creates an instance configured with a default configuration
    */
-  public static ImmutableRepresentationStringer create(String representation) {
-    return create(representation, DefaultStringerConfiguration.create());
+  public static ImmutableRepresentationStringer create(Object value) {
+    return create(value, DefaultStringerConfiguration.create());
   }
 
 
-  public static ImmutableRepresentationStringer create(String representation, StringerConfiguration config) {
+  public static ImmutableRepresentationStringer create(Object value, StringerConfiguration config) {
     ImmutableRepresentationStringer stringer = new ImmutableRepresentationStringer();
-    stringer.representation = config.ensureNonNullRepresentation(representation);
+    stringer.representation = config.convertToString(value);
     stringer.config = config;
     return stringer;
-  }
-
-  /**
-   * Forces the given value to be a string, even if it's null.<br>
-   *   A 'null' string is used if null is passed
-   * @param representation The value to fix
-   * @return A valid string representation
-   */
-  public static String fixRepresentation(String representation){
-    return representation == null ? "null" : representation;
   }
 
 }
