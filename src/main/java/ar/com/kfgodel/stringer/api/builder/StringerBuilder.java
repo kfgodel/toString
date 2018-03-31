@@ -65,6 +65,14 @@ public interface StringerBuilder {
   PartialDefinitionBuilder withProperty(String propertyName, Supplier<?> propertyValue);
 
   /**
+   * Adds an immutable value property to this builder
+   * @param propertyName The name of the property
+   * @param propertyValue The value to be used
+   * @return This instance
+   */
+  StringerBuilder withProperty(String propertyName, Object propertyValue);
+
+  /**
    * Adds another property to this builder, concatenating with previous content using a property separator as prefix.<br>
    *   Example: ", propertyName: propertyValue"
    * @param propertyName The name of the property
@@ -72,6 +80,14 @@ public interface StringerBuilder {
    * @return
    */
   PartialDefinitionBuilder andProperty(String propertyName, Supplier<?> propertyValue);
+
+  /**
+   * Adds another property with immutable value
+   * @param propertyName The name of the property
+   * @param propertyValue The immutable value for the property
+   * @return This instance
+   */
+  StringerBuilder andProperty(String propertyName, Object propertyValue);
 
   /**
    * Defines a prefix and suffix strings to a block of builder definition, so everything in that

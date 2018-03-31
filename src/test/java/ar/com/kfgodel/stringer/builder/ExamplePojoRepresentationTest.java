@@ -36,7 +36,6 @@ public class ExamplePojoRepresentationTest extends JavaSpec<StringerTestContext>
         });
       });
 
-
       describe("using properties to build the representation", () -> {
         context().stringer(() -> MutableBuilder.createDefault()
           .with(context().pojo().getClass().getSimpleName())
@@ -83,10 +82,6 @@ public class ExamplePojoRepresentationTest extends JavaSpec<StringerTestContext>
         });
       });
 
-
-
-
     });
-
   }
 }

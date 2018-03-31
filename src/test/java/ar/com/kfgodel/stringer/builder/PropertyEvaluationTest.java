@@ -23,9 +23,9 @@ public class PropertyEvaluationTest extends JavaSpec<StringerTestContext> {
         context().pojo(ExamplePojo::createDefault);
 
         describe("by default", () -> {
-          context().stringer(() ->
-            context().builder().withProperty(ExamplePojo.age_FIELD, context().pojo()::getAge)
-              .build()
+          context().stringer(() -> context().builder()
+            .withProperty(ExamplePojo.age_FIELD, context().pojo()::getAge)
+            .build()
           );
 
           it("calculates the property value on each representation", () -> {
@@ -38,10 +38,10 @@ public class PropertyEvaluationTest extends JavaSpec<StringerTestContext> {
           });
         });
 
-        describe("when caching the propery", () -> {
-          context().stringer(() ->
-            context().builder().withProperty(ExamplePojo.age_FIELD, context().pojo()::getAge).cacheable()
-              .build()
+        describe("when caching the property", () -> {
+          context().stringer(() -> context().builder()
+            .withProperty(ExamplePojo.age_FIELD, context().pojo()::getAge).cacheable()
+            .build()
           );
 
           it("calculates the property value only the first time", () -> {
@@ -52,6 +52,23 @@ public class PropertyEvaluationTest extends JavaSpec<StringerTestContext> {
             context().pojo().setAge(27);
             String secondValue = context().stringer().get();
             assertThat(secondValue).isEqualTo("age: 26");
+          });
+        });
+
+        describe("when a value is passed", () -> {
+          context().stringer(() -> context().builder()
+            .withProperty(ExamplePojo.age_FIELD, context().pojo().getAge())
+            .build()
+          );
+
+          it("uses the given value", () -> {
+            context().pojo().setAge(26);
+            String firstValue = context().stringer().get();
+            assertThat(firstValue).isEqualTo("age: 24");
+
+            context().pojo().setAge(27);
+            String secondValue = context().stringer().get();
+            assertThat(secondValue).isEqualTo("age: 24");
           });
         });
 

@@ -19,6 +19,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
+ * This class represents a stringer builder that mutates when used
  * Date: 30/03/18 - 13:42
  */
 public class MutableBuilder implements StringerBuilder {
@@ -95,15 +96,28 @@ public class MutableBuilder implements StringerBuilder {
 
   @Override
   public PartialDefinitionBuilder withProperty(String propertyName, Supplier<?> propertyValue) {
-    this.with(propertyName);
-    this.with(this.configuration.getPropertyNameToValueSeparator());
-    return this.with(propertyValue);
+    return this.with(propertyName)
+      .with(this.configuration.getPropertyNameToValueSeparator())
+      .with(propertyValue);
+  }
+
+  @Override
+  public StringerBuilder withProperty(String propertyName, Object propertyValue) {
+    return this.with(propertyName)
+      .with(this.configuration.getPropertyNameToValueSeparator())
+      .with(propertyValue);
   }
 
   @Override
   public PartialDefinitionBuilder andProperty(String propertyName, Supplier<?> propertyValue) {
-    this.with(configuration.getPropertySeparator());
-    return this.withProperty(propertyName, propertyValue);
+    return this.with(configuration.getPropertySeparator())
+      .withProperty(propertyName, propertyValue);
+  }
+
+  @Override
+  public StringerBuilder andProperty(String propertyName, Object propertyValue) {
+    return this.with(configuration.getPropertySeparator())
+      .withProperty(propertyName, propertyValue);
   }
 
   @Override

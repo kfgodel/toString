@@ -5,7 +5,6 @@ import ar.com.kfgodel.stringer.api.config.StringerConfiguration;
 import ar.com.kfgodel.stringer.impl.config.DefaultStringerConfiguration;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This class represents a stringer that is made up of other stringers from which it generates
@@ -35,9 +34,11 @@ public class CompositeRepresentationStringer implements Stringer {
 
   @Override
   public String get() {
-    return parts.stream()
-      .map(Stringer::get)
-      .collect(Collectors.joining());
+    StringBuilder builder = new StringBuilder(512);
+    for (Stringer part : parts) {
+      builder.append(part.get());
+    }
+    return builder.toString();
   }
 
   public CompositeRepresentationStringer addPart(Stringer part) {

@@ -87,7 +87,19 @@ public class PartOnHoldBuilder implements PartialDefinitionBuilder {
   }
 
   @Override
+  public StringerBuilder withProperty(String propertyName, Object propertyValue) {
+    this.addAsDynamicPart();
+    return originalBuilder.withProperty(propertyName, propertyValue);
+  }
+
+  @Override
   public PartialDefinitionBuilder andProperty(String propertyName, Supplier<?> propertyValue) {
+    this.addAsDynamicPart();
+    return originalBuilder.andProperty(propertyName, propertyValue);
+  }
+
+  @Override
+  public StringerBuilder andProperty(String propertyName, Object propertyValue) {
     this.addAsDynamicPart();
     return originalBuilder.andProperty(propertyName, propertyValue);
   }
