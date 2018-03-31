@@ -1,6 +1,7 @@
 package ar.com.kfgodel.stringer.impl.builder;
 
 import ar.com.kfgodel.stringer.api.Stringer;
+import ar.com.kfgodel.stringer.api.builder.PartialDefinitionBuilder;
 import ar.com.kfgodel.stringer.api.builder.StringerBuilder;
 import ar.com.kfgodel.stringer.api.config.StringerConfiguration;
 import ar.com.kfgodel.stringer.impl.CompositeRepresentationStringer;
@@ -12,7 +13,7 @@ import ar.com.kfgodel.stringer.impl.reflection.ObjectFieldExtractor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -38,10 +39,14 @@ public class MutableBuilder implements StringerBuilder {
   }
 
 
+  @Override
+  public StringerConfiguration getConfiguration() {
+    return configuration;
+  }
 
   @Override
   public Stringer build() {
-    if(parts.isEmpty()){
+    if (parts.isEmpty()) {
       //Optimization
       return EmptyRepresentationStringer.create();
     }
@@ -54,7 +59,11 @@ public class MutableBuilder implements StringerBuilder {
 
   @Override
   public StringerBuilder with(Object immutableValue) {
-    parts.add(ImmutablePart.create(immutableValue, configuration));
+    return addPart(ImmutablePart.create(immutableValue, configuration));
+  }
+
+  public MutableBuilder addPart(BuilderPart aPart) {
+    parts.add(aPart);
     return this;
   }
 
@@ -66,58 +75,67 @@ public class MutableBuilder implements StringerBuilder {
   }
 
   @Override
-  public StringerBuilder with(Supplier<?> dynamicValue) {
-    this.parts.add(DynamicPart.create(dynamicValue, configuration));
-    return this;
+  public PartialDefinitionBuilder with(Supplier<?> dynamicValue) {
+    PartOnHoldBuilder unfinishedDefinition = PartOnHoldBuilder.create(this, dynamicValue);
+    return unfinishedDefinition;
   }
 
   @Override
   public StringerBuilder with(Supplier<?>... dynamicValues) {
-    Arrays.stream(dynamicValues)
-      .forEach(this::with);
-    return this;
+    StringerBuilder builder = this;
+    for (int i = 0; i < dynamicValues.length; i++) {
+      Supplier<?> dynamicValue = dynamicValues[i];
+      builder = builder.with(dynamicValue).dynamic();
+    }
+    return builder;
   }
 
   @Override
-  public StringerBuilder withProperty(String propertyName, Supplier<?> propertyValue) {
+  public PartialDefinitionBuilder withProperty(String propertyName, Supplier<?> propertyValue) {
     this.with(propertyName);
     this.with(this.configuration.getPropertyNameToValueSeparator());
-    this.with(propertyValue);
-    return this;
+    return this.with(propertyValue);
   }
 
   @Override
-  public StringerBuilder andProperty(String propertyName, Supplier<?> propertyValue) {
+  public PartialDefinitionBuilder andProperty(String propertyName, Supplier<?> propertyValue) {
     this.with(configuration.getPropertySeparator());
-    this.withProperty(propertyName, propertyValue);
-    return this;
+    return this.withProperty(propertyName, propertyValue);
   }
 
   @Override
-  public StringerBuilder enclosingIn(String prefix, String suffix, Consumer<StringerBuilder> definition) {
-    this.with(prefix);
-    definition.accept(this);
-    this.with(suffix);
-    return this;
+  public StringerBuilder enclosingIn(String prefix, String suffix, Function<StringerBuilder, StringerBuilder> definition) {
+    StringerBuilder firstBuilder = this.with(prefix);
+    StringerBuilder secondBuilder = definition.apply(firstBuilder);
+    return secondBuilder.with(suffix);
   }
 
   @Override
-  public StringerBuilder enclosingAsState(Consumer<StringerBuilder> definition) {
-    enclosingIn(this.configuration.getStatePrefix(), this.configuration.getStateSuffix(), definition);
-    return this;
+  public StringerBuilder enclosingAsState(Function<StringerBuilder, StringerBuilder> definition) {
+    return enclosingIn(this.configuration.getStatePrefix(), this.configuration.getStateSuffix(), definition);
   }
 
   @Override
   public StringerBuilder representing(Object representable) {
-    this.with(representable.getClass().getSimpleName());
-    this.enclosingAsState((builder)-> {
-      List<ObjectField> properties = ObjectFieldExtractor.create(representable).extractFields();
-      properties.stream().limit(1)
-        .forEach((firstProperty) -> builder.withProperty(firstProperty.getName(), firstProperty::getValue));
-      properties.stream().skip(1)
-        .forEach((otherProperty) -> builder.andProperty(otherProperty.getName(), otherProperty::getValue));
-    });
-    return this;
+    return this.with(representable.getClass().getSimpleName())
+      .enclosingAsState((builder) -> {
+        List<ObjectField> properties = ObjectFieldExtractor.create(representable).extractFields();
+        return this.representProperties(properties, builder);
+      });
+  }
+
+  private StringerBuilder representProperties(List<ObjectField> properties, StringerBuilder builder) {
+    if(properties.isEmpty()){
+      return builder;
+    }
+    ObjectField firstProperty = properties.get(0);
+    PartialDefinitionBuilder currentBuilder = builder.withProperty(firstProperty.getName(), firstProperty::getValue);
+
+    for (int i = 1; i < properties.size(); i++) {
+      ObjectField additionalProperty = properties.get(i);
+      currentBuilder = currentBuilder.andProperty(additionalProperty.getName(), additionalProperty::getValue);
+    }
+    return currentBuilder;
   }
 
 }

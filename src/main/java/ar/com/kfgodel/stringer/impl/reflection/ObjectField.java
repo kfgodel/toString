@@ -57,8 +57,8 @@ public class ObjectField implements Comparable<ObjectField> {
   public String toString() {
     return MutableBuilder.createDefault()
       .with(getClass().getSimpleName())
-      .enclosingAsState((builder) -> {
-        builder.with(this.getName());
-      }).build().toString();
+      .enclosingAsState((builder) -> builder.with(this.getName()))
+      .build()
+      .toString();
   }
 }

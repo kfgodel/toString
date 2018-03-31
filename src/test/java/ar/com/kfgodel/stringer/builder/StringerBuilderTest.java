@@ -31,9 +31,9 @@ public class StringerBuilderTest extends JavaSpec<StringerTestContext> {
         assertThat(stringer.get()).isEqualTo("something and something else");
       });
 
-      it("can receive multiple content parts at the same time",()->{
+      it("can receive multiple content parts at the same time", () -> {
         Stringer stringer = context().builder()
-          .with("something"," and ","something else")
+          .with("something", " and ", "something else")
           .build();
         assertThat(stringer.get()).isEqualTo("something and something else");
       });
@@ -62,9 +62,9 @@ public class StringerBuilderTest extends JavaSpec<StringerTestContext> {
           assertThat(stringer.get()).isEqualTo("a dynamic part");
         });
 
-        it("can receive multiple suppliers at the same time",()->{
+        it("can receive multiple suppliers at the same time", () -> {
           Stringer stringer = context().builder()
-            .with(() -> "a dynamic part", ()-> " and other part")
+            .with(() -> "a dynamic part", () -> " and other part")
             .build();
           assertThat(stringer.get()).isEqualTo("a dynamic part and other part");
         });
@@ -78,6 +78,17 @@ public class StringerBuilderTest extends JavaSpec<StringerTestContext> {
             .build();
           assertThat(stringer.get()).isEqualTo("representation N°1");
           assertThat(stringer.get()).isEqualTo("representation N°2");
+        });
+
+        it("allows caching the result the first time", () -> {
+          AtomicInteger number = new AtomicInteger(1);
+
+          Stringer stringer = context().builder()
+            .with("representation N°")
+            .with(() -> String.valueOf(number.getAndIncrement())).cached()
+            .build();
+          assertThat(stringer.get()).isEqualTo("representation N°1");
+          assertThat(stringer.get()).isEqualTo("representation N°1");
         });
       });
 

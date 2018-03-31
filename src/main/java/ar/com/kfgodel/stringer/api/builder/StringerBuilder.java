@@ -1,8 +1,9 @@
 package ar.com.kfgodel.stringer.api.builder;
 
 import ar.com.kfgodel.stringer.api.Stringer;
+import ar.com.kfgodel.stringer.api.config.StringerConfiguration;
 
-import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -12,6 +13,12 @@ import java.util.function.Supplier;
  * Date: 17/03/18 - 22:19
  */
 public interface StringerBuilder {
+
+  /**
+   * @return The configuration used in this builder to create the stringer
+   */
+  StringerConfiguration getConfiguration();
+
   /**
    * Creates the stringer instance according to the definitions indicated in this instance
    * @return A new stringer instance configured
@@ -38,7 +45,7 @@ public interface StringerBuilder {
    * @param dynamicValue The lambda to call for the dynamically generated piece of representation
    * @return The modified builder
    */
-  StringerBuilder with(Supplier<?> dynamicValue);
+  PartialDefinitionBuilder with(Supplier<?> dynamicValue);
 
   /**
    * Adds multiple dynamic pieces to the representation to be evaluated each time the stringer is used
@@ -55,7 +62,7 @@ public interface StringerBuilder {
    * @param propertyValue The value
    * @return This instance
    */
-  StringerBuilder withProperty(String propertyName, Supplier<?> propertyValue);
+  PartialDefinitionBuilder withProperty(String propertyName, Supplier<?> propertyValue);
 
   /**
    * Adds another property to this builder, concatenating with previous content using a property separator as prefix.<br>
@@ -64,7 +71,7 @@ public interface StringerBuilder {
    * @param propertyValue The suppliert to get the value everytime
    * @return
    */
-  StringerBuilder andProperty(String propertyName, Supplier<?> propertyValue);
+  PartialDefinitionBuilder andProperty(String propertyName, Supplier<?> propertyValue);
 
   /**
    * Defines a prefix and suffix strings to a block of builder definition, so everything in that
@@ -74,7 +81,7 @@ public interface StringerBuilder {
    * @param definition The block to configure this builder content inside the delimiters
    * @return This instance
    */
-  StringerBuilder enclosingIn(String prefix, String suffix, Consumer<StringerBuilder> definition);
+  StringerBuilder enclosingIn(String prefix, String suffix, Function<StringerBuilder, StringerBuilder> definition);
 
   /**
    * Defines a piece of representation to be enclosed as represented object state.<br>
@@ -83,7 +90,7 @@ public interface StringerBuilder {
    * @param definition The block to execute as state definition
    * @return This instance
    */
-  StringerBuilder enclosingAsState(Consumer<StringerBuilder> definition);
+  StringerBuilder enclosingAsState(Function<StringerBuilder, StringerBuilder> definition);
 
   /**
    * Configures this builder to represent the given object as a class name and several properties using the object fields
@@ -93,4 +100,5 @@ public interface StringerBuilder {
    * @return This instance
    */
   StringerBuilder representing(Object representable);
+
 }
