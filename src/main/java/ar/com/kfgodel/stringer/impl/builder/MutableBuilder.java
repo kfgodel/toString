@@ -4,9 +4,7 @@ import ar.com.kfgodel.stringer.api.Stringer;
 import ar.com.kfgodel.stringer.api.builder.StringerBuilder;
 import ar.com.kfgodel.stringer.api.config.StringerConfiguration;
 import ar.com.kfgodel.stringer.impl.CompositeRepresentationStringer;
-import ar.com.kfgodel.stringer.impl.DynamicRepresentationStringer;
 import ar.com.kfgodel.stringer.impl.EmptyRepresentationStringer;
-import ar.com.kfgodel.stringer.impl.ImmutableRepresentationStringer;
 import ar.com.kfgodel.stringer.impl.config.DefaultStringerConfiguration;
 import ar.com.kfgodel.stringer.impl.reflection.ObjectField;
 import ar.com.kfgodel.stringer.impl.reflection.ObjectFieldExtractor;
@@ -22,7 +20,7 @@ import java.util.function.Supplier;
  */
 public class MutableBuilder implements StringerBuilder {
 
-  private List<Stringer> parts;
+  private List<BuilderPart> parts;
   private StringerConfiguration configuration;
 
   /**
@@ -48,14 +46,15 @@ public class MutableBuilder implements StringerBuilder {
       return EmptyRepresentationStringer.create();
     }
     CompositeRepresentationStringer composite = CompositeRepresentationStringer.create();
-    parts.forEach(composite::addPart);
+    parts.stream()
+      .map(BuilderPart::createStringer)
+      .forEach(composite::addPart);
     return composite;
   }
 
   @Override
   public StringerBuilder with(Object immutableValue) {
-    String representation = configuration.convertToString(immutableValue);
-    parts.add(ImmutableRepresentationStringer.create(representation));
+    parts.add(ImmutablePart.create(immutableValue, configuration));
     return this;
   }
 
@@ -68,8 +67,7 @@ public class MutableBuilder implements StringerBuilder {
 
   @Override
   public StringerBuilder with(Supplier<?> dynamicValue) {
-    Supplier<String> dynamicConversion = () -> configuration.convertToString(dynamicValue.get());
-    this.parts.add(DynamicRepresentationStringer.create(dynamicConversion));
+    this.parts.add(DynamicPart.create(dynamicValue, configuration));
     return this;
   }
 
