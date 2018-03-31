@@ -11,4 +11,20 @@ import java.util.function.Supplier;
  * Date: 15/03/18 - 19:52
  */
 public interface Stringer extends Supplier<String> {
+
+  /**
+   * Indicates if this stringer representation is a constant value (doesn't need to be computed)
+   * @return true if this stringer representation is a known value
+   */
+  default boolean isConstant(){
+    return false;
+  }
+
+  /**
+   * Indicates if this stringer representation can be cached once calculated
+   * @return false if this stringer representation can change over time
+   */
+  default boolean isCacheable(){
+    return false;
+  }
 }

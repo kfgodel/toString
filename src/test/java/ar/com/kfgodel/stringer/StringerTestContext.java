@@ -7,6 +7,7 @@ import ar.com.kfgodel.stringer.api.config.StringerConfiguration;
 import ar.com.kfgodel.stringer.impl.*;
 import ar.com.kfgodel.stringer.samples.ExamplePojo;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -46,5 +47,8 @@ public interface StringerTestContext extends TestContext {
 
   ExamplePojo pojo();
   void pojo(Supplier<ExamplePojo> definition);
+
+  List<Stringer> stringers();
+  void stringers(Supplier<List<Stringer>> definition);
 
 }

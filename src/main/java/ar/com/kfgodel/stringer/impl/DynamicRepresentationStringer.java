@@ -47,4 +47,13 @@ public class DynamicRepresentationStringer implements Stringer {
     return stringer;
   }
 
+  @Override
+  public boolean isCacheable() {
+    return false;
+  }
+
+  @Override
+  public boolean isConstant() {
+    return false;
+  }
 }

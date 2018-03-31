@@ -15,6 +15,16 @@ public class EmptyRepresentationStringer implements Stringer {
     return "";
   }
 
+  @Override
+  public boolean isConstant() {
+    return true;
+  }
+
+  @Override
+  public boolean isCacheable() {
+    return true;
+  }
+
   public static EmptyRepresentationStringer create() {
     EmptyRepresentationStringer stringer = new EmptyRepresentationStringer();
     return stringer;

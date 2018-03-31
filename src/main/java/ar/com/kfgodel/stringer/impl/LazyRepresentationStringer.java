@@ -57,6 +57,29 @@ public class LazyRepresentationStringer implements Stringer {
       return firstRepresentation;
     }
 
+    @Override
+    public boolean isConstant() {
+      return false;
+    }
+
+    @Override
+    public boolean isCacheable() {
+      return true;
+    }
   }
 
+  @Override
+  public String toString() {
+    return delegate.toString();
+  }
+
+  @Override
+  public boolean isCacheable() {
+    return delegate.isCacheable();
+  }
+
+  @Override
+  public boolean isConstant() {
+    return delegate.isConstant();
+  }
 }

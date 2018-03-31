@@ -48,7 +48,7 @@ public class MutableBuilder implements StringerBuilder {
 
   @Override
   public Stringer build() {
-    List<Stringer> optimizedParts = PartsOptimizer.create(this.parts)
+    List<Stringer> optimizedParts = PartsOptimizer.create(this.parts, this.configuration)
       .optimize();
     if (optimizedParts.isEmpty()) {
       //Optimization
@@ -57,8 +57,7 @@ public class MutableBuilder implements StringerBuilder {
     if(optimizedParts.size() == 1){
       return optimizedParts.get(0);
     }
-    CompositeRepresentationStringer composite = CompositeRepresentationStringer.create(this.configuration);
-    optimizedParts.forEach(composite::addPart);
+    CompositeRepresentationStringer composite = CompositeRepresentationStringer.create(optimizedParts, this.configuration);
     return composite;
   }
 

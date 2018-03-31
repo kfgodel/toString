@@ -26,6 +26,15 @@ public class ImmutableRepresentationStringer implements Stringer {
     return create(value, DefaultStringerConfiguration.create());
   }
 
+  @Override
+  public boolean isCacheable() {
+    return true;
+  }
+
+  @Override
+  public boolean isConstant() {
+    return true;
+  }
 
   public static ImmutableRepresentationStringer create(Object value, StringerConfiguration config) {
     ImmutableRepresentationStringer stringer = new ImmutableRepresentationStringer();
@@ -34,4 +43,8 @@ public class ImmutableRepresentationStringer implements Stringer {
     return stringer;
   }
 
+  @Override
+  public String toString() {
+    return representation;
+  }
 }

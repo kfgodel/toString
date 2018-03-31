@@ -4,6 +4,7 @@ import ar.com.dgarcia.javaspec.api.JavaSpec;
 import ar.com.dgarcia.javaspec.api.JavaSpecRunner;
 import ar.com.kfgodel.stringer.impl.CompositeRepresentationStringer;
 import ar.com.kfgodel.stringer.impl.ImmutableRepresentationStringer;
+import org.assertj.core.util.Lists;
 import org.junit.runner.RunWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,34 +17,32 @@ public class CompositeRepresentationStringerTest extends JavaSpec<StringerTestCo
   @Override
   public void define() {
     describe("a composite stringer", () -> {
-      context().compositeStringer(CompositeRepresentationStringer::create);
+      context().compositeStringer(() -> CompositeRepresentationStringer.createDefault(context().stringers()));
 
-      it("returns an empty string when no stringer part is defined", () -> {
-        assertThat(context().compositeStringer().get()).isEqualTo("");
+      describe("created with no stringer parts", () -> {
+        context().stringers(Lists::newArrayList);
+
+        it("returns an empty string when no stringer part is defined", () -> {
+          assertThat(context().compositeStringer().get()).isEqualTo("");
+        });
       });
 
-      describe("when a part is added", () -> {
-        beforeEach(() -> {
-          context().compositeStringer().addPart(ImmutableRepresentationStringer.create("Part1"));
-        });
+      describe("when a part is used", () -> {
+        context().stringers(() -> Lists.newArrayList(ImmutableRepresentationStringer.create("Part1")));
 
-        it("uses the stringer part as result", () -> {
+        it("uses the stringer representation as result", () -> {
           assertThat(context().compositeStringer().get()).isEqualTo("Part1");
         });
-
-        describe("when another part is added", () -> {
-          beforeEach(() -> {
-            context().compositeStringer().addPart(ImmutableRepresentationStringer.create("Part2"));
-          });
-
-          it("concatenates each part result after the previous", () -> {
-            assertThat(context().compositeStringer().get()).isEqualTo("Part1Part2");
-          });
-
-        });
-        ;
       });
 
+      describe("when more than one stringer is used", () -> {
+        context().stringers(() -> Lists.newArrayList(ImmutableRepresentationStringer.create("Part1"), ImmutableRepresentationStringer.create("Part2")));
+
+        it("concatenates each part representation", () -> {
+          assertThat(context().compositeStringer().get()).isEqualTo("Part1Part2");
+        });
+
+      });
     });
   }
 }
