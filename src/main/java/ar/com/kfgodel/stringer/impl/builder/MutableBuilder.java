@@ -8,6 +8,7 @@ import ar.com.kfgodel.stringer.impl.CompositeRepresentationStringer;
 import ar.com.kfgodel.stringer.impl.EmptyRepresentationStringer;
 import ar.com.kfgodel.stringer.impl.ImmutableRepresentationStringer;
 import ar.com.kfgodel.stringer.impl.config.DefaultStringerConfiguration;
+import ar.com.kfgodel.stringer.impl.optimizer.PartsOptimizer;
 import ar.com.kfgodel.stringer.impl.reflection.ObjectField;
 import ar.com.kfgodel.stringer.impl.reflection.ObjectFieldExtractor;
 
@@ -47,12 +48,17 @@ public class MutableBuilder implements StringerBuilder {
 
   @Override
   public Stringer build() {
-    if (parts.isEmpty()) {
+    List<Stringer> optimizedParts = PartsOptimizer.create(this.parts)
+      .optimize();
+    if (optimizedParts.isEmpty()) {
       //Optimization
       return EmptyRepresentationStringer.create();
     }
-    CompositeRepresentationStringer composite = CompositeRepresentationStringer.create();
-    parts.forEach(composite::addPart);
+    if(optimizedParts.size() == 1){
+      return optimizedParts.get(0);
+    }
+    CompositeRepresentationStringer composite = CompositeRepresentationStringer.create(this.configuration);
+    optimizedParts.forEach(composite::addPart);
     return composite;
   }
 
