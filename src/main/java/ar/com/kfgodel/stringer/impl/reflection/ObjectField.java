@@ -41,8 +41,12 @@ public class ObjectField implements Comparable<ObjectField> {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof ObjectField)) return false;
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof ObjectField)) {
+      return false;
+    }
     ObjectField that = (ObjectField) o;
     return Objects.equals(nativeField, that.nativeField) &&
       Objects.equals(anObject, that.anObject);
