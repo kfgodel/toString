@@ -62,7 +62,6 @@ public class PropertyEvaluationTest extends JavaSpec<StringerTestContext> {
           );
 
           it("uses the given value", () -> {
-            context().pojo().setAge(26);
             String firstValue = context().stringer().get();
             assertThat(firstValue).isEqualTo("age: 24");
 
