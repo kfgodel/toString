@@ -12,7 +12,7 @@
 
   <groupId>ar.com.kfgodel</groupId>
   <artifactId>stringer</artifactId>
-  <version>2.0.0</version>
+  <version>2.0.1-SNAPSHOT</version>
 
   <name>toString</name>
   <description>A Java project that eases common toString() method implementation</description>
