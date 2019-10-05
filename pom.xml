@@ -6,8 +6,8 @@
 
   <parent>
     <groupId>ar.com.kfgodel</groupId>
-    <artifactId>root-pom</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <artifactId>java-pom</artifactId>
+    <version>0.1-SNAPSHOT</version>
   </parent>
 
   <groupId>ar.com.kfgodel</groupId>
@@ -27,211 +27,16 @@
     <repository>
       <id>kfgodel_mosquito</id>
       <name>Repo Mosquito</name>
-      <url>http://kfgodel.info:8081/nexus/content/groups/public/</url>
+      <url>http://kfgodel.info:8081/nexus/repository/public/</url>
     </repository>
   </repositories>
 
   <properties>
-    <project.java.source>1.8</project.java.source>
-    <project.java.target>1.8</project.java.target>
-
-    <version.plugin.compiler>3.3</version.plugin.compiler>
-    <version.plugin.jar>2.6</version.plugin.jar>
-    <version.plugin.source>2.4</version.plugin.source>
-    <version.plugin.failsafe>2.19.1</version.plugin.failsafe>
-    <version.plugin.surefire>2.19.1</version.plugin.surefire>
-    <version.plugin.jacoco>0.7.6.201602180812</version.plugin.jacoco>
-    <version.plugin.jgit-buildnumber>1.2.9</version.plugin.jgit-buildnumber>
-    <version.plugin.buildnumber>1.4</version.plugin.buildnumber>
-    <version.plugin.querydsl>1.1.3</version.plugin.querydsl>
-
-    <version.querydsl>4.0.9</version.querydsl>
-    <version.slf4j>1.7.6</version.slf4j>
-    <version.logback>1.1.1</version.logback>
-    <version.junit>4.11</version.junit>
-    <version.guava>19.0</version.guava>
     <version.mockito>2.0.2-beta</version.mockito>
     <version.assertj>1.6.1</version.assertj>
+    <version.junit>4.11</version.junit>
     <version.javaspec>2.2</version.javaspec>
-
-    <!-- Location of the JaCoCo output file created by the agent execution during ITs. We want
-all modules to dump their coverage information into a single file for Sonar to pick up.
-Sonar is only going to look for one file so we put the file in target folder of the root of the
-project when running a top-down build. session.executionRootDirectory points there if
-we run Maven from the top level folder of the project.
-If you don't do it this way, you have to define an absolute path to a fixed location
-on the server or you have to put a relative path in every child module defining where JaCoCo is
-to place its output file. The last solution is error prone so the solution shown here or the use
-of a fixed location is recommended. -->
-    <jacoco.out.path>${session.executionRootDirectory}/target</jacoco.out.path>
-    <jacoco.out.file>jacoco.exec</jacoco.out.file>
-    <!-- Location of the JaCoCo IT output file for use on Jenkins. See jacoco.out.path. NOTE: Can't use
-    ${session.executionRootDirectory} here because of http://jira.codehaus.org/browse/SONAR-3427.
-    env.WORKSPACE is set by Jenkins, which is really the only time sonar:sonar is going to be run in
-    most cases. -->
-    <sonar.jacoco.itReportPath>${env.WORKSPACE}/target/${jacoco.out.file}</sonar.jacoco.itReportPath>
-    <version.nary>2.0.4-SNAPSHOT</version.nary>
   </properties>
-
-
-
-  <build>
-    <plugins>
-
-      <!-- Genera los binarios -->
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>${version.plugin.compiler}</version>
-        <configuration>
-          <source>${project.java.source}</source>
-          <target>${project.java.target}</target>
-          <debug>true</debug>
-        </configuration>
-      </plugin>
-
-      <!-- Corre los tests unitarios *Test -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${version.plugin.surefire}</version>
-        <configuration>
-          <!-- Adds the line argument to dump jacoco file where expected -->
-          <argLine>${jacoco.agent.arg}</argLine>
-        </configuration>
-      </plugin>
-
-      <!-- Corre los tests de integracion *IT -->
-      <plugin>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>${version.plugin.failsafe}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-            <configuration>
-              <!-- Adds the line argument to dump jacoco file where expected -->
-              <argLine>${jacoco.agent.arg}</argLine>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-
-      <!-- Recopila info de cobertura para los tests -->
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${version.plugin.jacoco}</version>
-        <executions>
-          <execution>
-            <id>prepare-agent</id>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-            <configuration>
-              <destFile>${jacoco.out.path}/${jacoco.out.file}</destFile>
-              <propertyName>jacoco.agent.arg</propertyName>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!-- Permite disponer de datos del repo git durante el build-->
-      <plugin>
-        <groupId>ru.concerteza.buildnumber</groupId>
-        <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>${version.plugin.jgit-buildnumber}</version>
-        <executions>
-          <execution>
-            <id>git-buildnumber</id>
-            <goals>
-              <goal>extract-buildnumber</goal>
-            </goals>
-            <phase>prepare-package</phase>
-          </execution>
-        </executions>
-      </plugin>
-
-
-      <!-- Plugin para generar el numero buildNumber de version de la app -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-        <version>${version.plugin.buildnumber}</version>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <buildNumberPropertiesFileLocation>${basedir}/src/main/resources/buildNumber.properties</buildNumberPropertiesFileLocation>
-          <!-- Don't validate uncommited changes -->
-          <doCheck>false</doCheck>
-          <!-- Don't validate un pushed changes -->
-          <doUpdate>false</doUpdate>
-
-          <!-- Format of the generated buildNumber combining the declared items -->
-          <format>{0}-build_{1,number}-{2,date,yyyyMMdd_HHmmss}</format>
-          <items>
-            <item>${project.version}</item>
-            <item>buildNumber</item>
-            <item>timestamp</item>
-          </items>
-        </configuration>
-      </plugin>
-
-      <!-- Los empaqueta en jars -->
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>${version.plugin.jar}</version>
-        <configuration>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-            </manifest>
-            <manifestEntries>
-              <Build-JVM>${java.vm.name} - ${java.vm.vendor}</Build-JVM>
-              <Build-OS>${os.name} - Version: ${os.version}</Build-OS>
-              <Build-Number>${buildNumber}</Build-Number>
-
-              <Application-GroupId>${project.groupId}</Application-GroupId>
-              <Application-ArtifactId>${project.artifactId}</Application-ArtifactId>
-              <Application-Version>${project.version}</Application-Version>
-
-              <Git-Revision>${git.revision}</Git-Revision>
-              <Git-Branch>${git.branch}</Git-Branch>
-              <Git-Tag>${git.tag}</Git-Tag>
-              <Git-Commits-Count>${git.commitsCount}</Git-Commits-Count>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-
-      <!-- Attachea los fuentes como jar -->
-      <plugin>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>${version.plugin.source}</version>
-        <executions>
-          <execution>
-            <id>attach-source</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-    </plugins>
-
-  </build>
-
-
 
   <dependencies>
 
