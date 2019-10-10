@@ -18,19 +18,19 @@
   <description>A Java project that eases common toString() method implementation</description>
   <url>https://github.com/kfgodel/toString</url>
 
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
   <scm>
     <developerConnection>scm:git:ssh://github.com/kfgodel/toString.git</developerConnection>
     <connection>${project.scm.developerConnection}</connection>
     <url>${project.url}</url>
   </scm>
-
-  <repositories>
-    <repository>
-      <id>kfgodel_mosquito</id>
-      <name>Repo Mosquito</name>
-      <url>http://kfgodel.info:8081/nexus/repository/public/</url>
-    </repository>
-  </repositories>
 
   <properties>
     <!-- Sonar properties to prevent unintentional id changes (Reference: https://docs.sonarqube.org/latest/analysis/analysis-parameters/) -->
@@ -41,6 +41,14 @@
     <version.junit>4.11</version.junit>
     <version.javaspec>2.2</version.javaspec>
   </properties>
+
+  <repositories>
+    <repository>
+      <id>kfgodel_mosquito</id>
+      <name>Repo Mosquito</name>
+      <url>http://kfgodel.info:8081/nexus/repository/public/</url>
+    </repository>
+  </repositories>
 
   <dependencies>
 
@@ -77,5 +85,19 @@
     </dependency>
 
   </dependencies>
+
+  <developers>
+    <developer>
+      <id>dlgarcia</id>
+      <name>Dario L Garcia</name>
+      <email>dario.garcia@10pines.com</email>
+      <organization>10Pines SRL</organization>
+      <organizationUrl>https://www.10pines.com/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+    </developer>
+  </developers>
 
 </project>
