@@ -38,7 +38,7 @@
 
     <version.mockito>2.0.2-beta</version.mockito>
     <version.assertj>1.6.1</version.assertj>
-    <version.junit>4.11</version.junit>
+    <version.junit>4.13.1</version.junit>
     <version.javaspec>2.2</version.javaspec>
   </properties>
 
